@@ -1,5 +1,7 @@
 [OSEv3:vars]
 
+# NOTE: Modify the openshift subnet:
+# sed 's/cff6/a3cf/g' ~/ocp-deployment-homework/hosts-template-alvaro-v1 > ~/ocp-deployment-homework/hosts-template-alvaro-v1  
 ###########################################################################
 ### Ansible Vars
 ###########################################################################
