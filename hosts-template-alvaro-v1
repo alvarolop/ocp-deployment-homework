@@ -20,7 +20,7 @@ containerized=false
 openshift_disable_check="disk_availability,memory_availability,docker_image_availability"
 
 ## Set this line to enable NFS
-#openshift_enable_unsupported_configurations=True
+openshift_enable_unsupported_configurations=True
 
 
 # Hosted components requirements
