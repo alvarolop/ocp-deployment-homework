@@ -5,9 +5,11 @@
 ###########################################################################
 ### Ansible Vars
 ###########################################################################
+
 timeout=60
 ansible_become=yes
 ansible_ssh_user=ec2-user
+
 
 
 ###################################################################################
@@ -25,12 +27,13 @@ openshift_disable_check="disk_availability,memory_availability,docker_image_avai
 openshift_enable_unsupported_configurations=True
 
 
-# Hosted components requirements
+# Infra components node  selector
 openshift_hosted_infra_selector="env=infra"
-osm_default_node_selector="env=app"
 openshift_router_selector='env=infra'
 openshift_registry_selector='env=infra'
 
+# Porject pods node selector
+osm_default_node_selector="env=app"
 
 # Configure additional projects
 openshift_additional_projects={'openshift-template-service-broker': {'default_node_selector': ''}}
@@ -90,20 +93,19 @@ openshift_master_overwrite_named_certificates=True
 os_sdn_network_plugin_name='redhat/openshift-ovs-networkpolicy'
 
 
-
 # htpasswd Authentication
 # https://docs.openshift.com/container-platform/3.9/install_config/configuring_authentication.html#HTPasswdPasswordIdentityProvider
 # https://docs.openshift.com/container-platform/3.9/install_config/configuring_authentication.html
 openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 # Defining htpasswd users
-#openshift_master_htpasswd_users={'user1': '<pre-hashed password>', 'user2': '<pre-hashed password>'}
-# or
-openshift_master_htpasswd_file=/root/htpasswd.openshift
- 
+openshift_master_htpasswd_file=~/ocp-deployment-homework/htpasswd.openshift
+
+
 
 ###################################################################################
 ### 4. Logging Components: Elasticsearch, Kibana, Fluentd
 ####################################################################################
+
 openshift_logging_install_logging=True # Enable logging
 # Configuring the nfs storage
 openshift_logging_storage_kind=nfs
@@ -122,9 +124,11 @@ openshift_logging_curator_nodeselector={"env":"infra"}
 openshift_logging_es_cluster_size=1
 
 
+
 ####################################################################################
 ### 5. Metrics Components: Cassandra, Hawkular, Heapster
 ####################################################################################
+
 openshift_metrics_install_metrics=True # Enable metrics
 # Configuring the nfs storage
 openshift_metrics_storage_kind=nfs
@@ -140,24 +144,22 @@ openshift_metrics_hawkular_nodeselector={"env":"infra"}
 openshift_metrics_heapster_nodeselector={"env":"infra"}
 
 
+
 ###################################################################################
 ### 6. Service Catalog Components: API server, Template Service Broker, Ansible Broker
 ####################################################################################
 
 ## 1. Enable Service broker ( default = true ) 
-#
 openshift_enable_service_catalog=true
 
 
 ## 2. Enable Template Service Broker ( default = true )
-#
 template_service_broker_install=true
 openshift_template_service_broker_namespaces=['openshift']
 template_service_broker_selector={"env": "infra"}
 
 
 ## 3. Enable Openshift ansible broker ( default = true )
-#
 ansible_service_broker_install=true
 # Allow the user to add APB images to the broker without a cluster administrator configuring the broker:
 ansible_service_broker_local_registry_whitelist=['.*-apb$']
@@ -172,9 +174,11 @@ openshift_hosted_etcd_storage_volume_size=10G
 openshift_hosted_etcd_storage_labels={'storage': 'etcd'}
 
 
+
 ####################################################################################
 ### 7. Openshift Router and Registry vars 
 ####################################################################################
+
 # Without the storage configuration, all the downloaded images are ephemeral.
 # The following configures the registry storage
 openshift_hosted_registry_storage_kind=nfs
@@ -192,6 +196,7 @@ openshift_hosted_registry_enforcequota=true
 openshift_hosted_registry_replicas=1
 openshift_hosted_router_replicas=2
 #openshift_hosted_router_certificate={"certfile": "/path/to/router.crt", "keyfile": "/path/to/router.key", "cafile": "/path/to/router-ca.crt"}                                                                    
+
 
 
 ###########################################################################
@@ -288,19 +293,6 @@ openshift_prometheus_oauth_proxy_image_prefix=isolated1.a3cf.internal:5000/opens
 openshift_prometheus_oauth_proxy_image_version=v3.9.14
 openshift_prometheus_node_exporter_image_prefix=isolated1.a3cf.internal:5000/openshift3/
 openshift_prometheus_node_exporter_image_version=v3.9.14
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
