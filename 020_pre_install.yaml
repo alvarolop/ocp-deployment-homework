@@ -1,26 +1,4 @@
 ---
-- name: Automatize all the tasks
-  hosts: localhost 
-  vars:
-    version: 1
-    guid: ea11
-    repo: https://github.com/alvarolop/ocp-deployment-homework
-
-  tasks:
-    - name: Replace values of the GUID in the openshift-ansible hosts file
-      replace:
-        path: ./hosts-template-alvaro-v1
-        regexp: '<GUID>'
-        replace: '{{ guid }}' 
-
-    - name: Install tools
-      yum:
-        name: "{{ packages }}"
-      vars:
-        packages:
-        - atomic-openshift-utils
-        - atomic-openshift-clients
-
 - name: Check Docker
   hosts: nodes
   
