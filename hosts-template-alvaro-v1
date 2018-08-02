@@ -1,6 +1,4 @@
-[OSEv3:vars]
-# NOTE: Modify the openshift subnet:
-# sed -i 's/<GUID>/<GUID>/g' ~/ocp-deployment-homework/hosts-template-alvaro-v1
+# sed -i 's/ea11/ea11/g' ~/ocp-deployment-homework/hosts-template-alvaro-v1
 ###########################################################################
 ### Ansible Vars
 ###########################################################################
@@ -76,9 +74,9 @@ openshift_master_api_port=443
 openshift_master_console_port=443
 
 openshift_master_cluster_method=native
-openshift_master_cluster_hostname=loadbalancer1.<GUID>.internal
-openshift_master_cluster_public_hostname=loadbalancer1.<GUID>.example.opentlc.com
-openshift_master_default_subdomain=apps.<GUID>.example.opentlc.com
+openshift_master_cluster_hostname=loadbalancer1.ea11.internal
+openshift_master_cluster_public_hostname=loadbalancer1.ea11.example.opentlc.com
+openshift_master_default_subdomain=apps.ea11.example.opentlc.com
 #openshift_master_ca_certificate={'certfile': '/root/intermediate_ca.crt', 'keyfile': '/root/intermediate_ca.key'}                                                                                                
 openshift_master_overwrite_named_certificates=True
 
@@ -97,14 +95,14 @@ os_sdn_network_plugin_name='redhat/openshift-ovs-networkpolicy'
 #
 # https://docs.openshift.com/container-platform/3.9/install_config/configuring_authentication.html#HTPasswdPasswordIdentityProvider
 # https://docs.openshift.com/container-platform/3.9/install_config/configuring_authentication.html
-#openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 # Defining htpasswd users
-#openshift_master_htpasswd_file=~/ocp-deployment-homework/htpasswd.openshift
+openshift_master_htpasswd_file=~/ocp-deployment-homework/htpasswd.graduates
 
 ## 2. LDAP Authentication (download ipa-ca.crt first)
 #
-openshift_master_identity_providers=[{'name': 'ldap', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider','attributes': {'id': ['dn'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']}, 'bindDN': 'uid=admin,cn=users,cn=accounts,dc=shared,dc=example,dc=opentlc,dc=com', 'bindPassword': 'r3dh4t1!', 'ca': '/etc/origin/master/ipa-ca.crt','insecure': 'false', 'url': 'ldaps://ipa.shared.example.opentlc.com:636/cn=users,cn=accounts,dc=shared,dc=example,dc=opentlc,dc=com?uid?sub?(memberOf=cn=ocp-users,cn=groups,cn=accounts,dc=shared,dc=example,dc=opentlc,dc=com)'}]                            
-openshift_master_ldap_ca_file=/root/ipa-ca.crt
+#openshift_master_identity_providers=[{'name': 'ldap', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider','attributes': {'id': ['dn'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']}, 'bindDN': 'uid=admin,cn=users,cn=accounts,dc=shared,dc=example,dc=opentlc,dc=com', 'bindPassword': 'r3dh4t1!', 'ca': '/etc/origin/master/ipa-ca.crt','insecure': 'false', 'url': 'ldaps://ipa.shared.example.opentlc.com:636/cn=users,cn=accounts,dc=shared,dc=example,dc=opentlc,dc=com?uid?sub?(memberOf=cn=ocp-users,cn=groups,cn=accounts,dc=shared,dc=example,dc=opentlc,dc=com)'}]                            
+#openshift_master_ldap_ca_file=/root/ipa-ca.crt
 
 
 
@@ -251,13 +249,13 @@ openshift_prometheus_node_exporter_image_version=v3.9
 
 #########################################################################
 ### Disconnected Install Vars
-### Requires a docker registry at isolated1.<GUID>.internal:5000
+### Requires a docker registry at isolated1.ea11.internal:5000
 ###########################################################################
 ## sets the debug level for all OpenShift components.  Default is 2
 ##debug_level=8
 #
 ## used for container-based install, not RPM
-#system_images_registry=isolated1.<GUID>.internal:5000
+#system_images_registry=isolated1.ea11.internal:5000
 #
 ## https://bugzilla.redhat.com/show_bug.cgi?id=1461465  target release 3.9
 ##the enterprise registry will not be added to the docker registries.
@@ -265,39 +263,39 @@ openshift_prometheus_node_exporter_image_version=v3.9
 #openshift_docker_ent_reg=''
 #
 ## https://bugzilla.redhat.com/show_bug.cgi?id=1516534 target release 3.10
-#oreg_url=isolated1.<GUID>.internal:5000/openshift3/ose-${component}:${version}
+#oreg_url=isolated1.ea11.internal:5000/openshift3/ose-${component}:${version}
 #
 #openshift_examples_modify_imagestreams=true
-#openshift_docker_additional_registries=isolated1.<GUID>.internal:5000
-#openshift_docker_insecure_registries=isolated1.<GUID>.internal:5000
+#openshift_docker_additional_registries=isolated1.ea11.internal:5000
+#openshift_docker_insecure_registries=isolated1.ea11.internal:5000
 #openshift_docker_blocked_registries=registry.access.redhat.com,docker.io
-#openshift_metrics_image_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_metrics_image_prefix=isolated1.ea11.internal:5000/openshift3/
 #openshift_metrics_image_version=v3.9.14
-#openshift_logging_image_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_logging_image_prefix=isolated1.ea11.internal:5000/openshift3/
 #openshift_logging_image_version=v3.9.14
-#ansible_service_broker_image_prefix=isolated1.<GUID>.internal:5000/openshift3/ose-
+#ansible_service_broker_image_prefix=isolated1.ea11.internal:5000/openshift3/ose-
 #ansible_service_broker_image_tag=v3.9.14
-#ansible_service_broker_etcd_image_prefix=isolated1.<GUID>.internal:5000/rhel7/
+#ansible_service_broker_etcd_image_prefix=isolated1.ea11.internal:5000/rhel7/
 #ansible_service_broker_etcd_image_tag=latest
-#openshift_service_catalog_image_prefix=isolated1.<GUID>.internal:5000/openshift3/ose-
+#openshift_service_catalog_image_prefix=isolated1.ea11.internal:5000/openshift3/ose-
 #openshift_service_catalog_image_version=v3.9.14
-#openshift_cockpit_deployer_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_cockpit_deployer_prefix=isolated1.ea11.internal:5000/openshift3/
 #openshift_cockpit_deployer_version=v3.9.14
-#template_service_broker_prefix=isolated1.<GUID>.internal:5000/openshift3/ose-
+#template_service_broker_prefix=isolated1.ea11.internal:5000/openshift3/ose-
 #template_service_broker_version=v3.9.14
-#openshift_web_console_prefix=isolated1.<GUID>.internal:5000/openshift3/ose-
+#openshift_web_console_prefix=isolated1.ea11.internal:5000/openshift3/ose-
 #openshift_web_console_version=v3.9.14
 #
 ## PROMETHEUS SETTINGS
-#openshift_prometheus_image_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_prometheus_image_prefix=isolated1.ea11.internal:5000/openshift3/
 #openshift_prometheus_image_version=v3.9.14
-#openshift_prometheus_alertmanager_image_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_prometheus_alertmanager_image_prefix=isolated1.ea11.internal:5000/openshift3/
 #openshift_prometheus_alertmanager_image_version=v3.9.14
-#openshift_prometheus_alertbuffer_image_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_prometheus_alertbuffer_image_prefix=isolated1.ea11.internal:5000/openshift3/
 #openshift_prometheus_alertbuffer_image_version=v3.9.14
-#openshift_prometheus_oauth_proxy_image_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_prometheus_oauth_proxy_image_prefix=isolated1.ea11.internal:5000/openshift3/
 #openshift_prometheus_oauth_proxy_image_version=v3.9.14
-#openshift_prometheus_node_exporter_image_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_prometheus_node_exporter_image_prefix=isolated1.ea11.internal:5000/openshift3/
 #openshift_prometheus_node_exporter_image_version=v3.9.14
 #
 
@@ -317,32 +315,32 @@ nfs
 #glusterfs
 
 [lb]
-loadbalancer1.<GUID>.internal host_zone=eu-central-1b
+loadbalancer1.ea11.internal host_zone=eu-central-1b
 
 [masters]
-master1.<GUID>.internal host_zone=eu-central-1b
-master2.<GUID>.internal host_zone=eu-central-1b
-master3.<GUID>.internal host_zone=eu-central-1b
+master1.ea11.internal host_zone=eu-central-1b
+master2.ea11.internal host_zone=eu-central-1b
+master3.ea11.internal host_zone=eu-central-1b
 
 [etcd]
-master1.<GUID>.internal host_zone=eu-central-1b
-master2.<GUID>.internal host_zone=eu-central-1b
-master3.<GUID>.internal host_zone=eu-central-1b
+master1.ea11.internal host_zone=eu-central-1b
+master2.ea11.internal host_zone=eu-central-1b
+master3.ea11.internal host_zone=eu-central-1b
 
 [nodes]
 ## These are the masters
-master1.<GUID>.internal openshift_hostname=master1.<GUID>.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': '<GUID>', 'zone': 'eu-central-1b'}"
-master2.<GUID>.internal openshift_hostname=master2.<GUID>.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': '<GUID>', 'zone': 'eu-central-1b'}"
-master3.<GUID>.internal openshift_hostname=master3.<GUID>.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': '<GUID>', 'zone': 'eu-central-1b'}"
+master1.ea11.internal openshift_hostname=master1.ea11.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': 'ea11', 'zone': 'eu-central-1b'}"
+master2.ea11.internal openshift_hostname=master2.ea11.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': 'ea11', 'zone': 'eu-central-1b'}"
+master3.ea11.internal openshift_hostname=master3.ea11.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': 'ea11', 'zone': 'eu-central-1b'}"
 
 ## These are infranodes
-infranode2.<GUID>.internal openshift_hostname=infranode2.<GUID>.internal  openshift_node_labels="{'logging':'true','cluster': '<GUID>', 'env':'infra', 'zone': 'eu-central-1b'}"
-infranode1.<GUID>.internal openshift_hostname=infranode1.<GUID>.internal  openshift_node_labels="{'logging':'true','cluster': '<GUID>', 'env':'infra', 'zone': 'eu-central-1b'}"
+infranode2.ea11.internal openshift_hostname=infranode2.ea11.internal  openshift_node_labels="{'logging':'true','cluster': 'ea11', 'env':'infra', 'zone': 'eu-central-1b'}"
+infranode1.ea11.internal openshift_hostname=infranode1.ea11.internal  openshift_node_labels="{'logging':'true','cluster': 'ea11', 'env':'infra', 'zone': 'eu-central-1b'}"
 
 ## These are regular nodes
-node2.<GUID>.internal openshift_hostname=node2.<GUID>.internal  openshift_node_labels="{'logging':'true','cluster': '<GUID>', 'env':'app', 'zone': 'eu-central-1b'}"
-node3.<GUID>.internal openshift_hostname=node3.<GUID>.internal  openshift_node_labels="{'logging':'true','cluster': '<GUID>', 'env':'app', 'zone': 'eu-central-1b'}"
-node1.<GUID>.internal openshift_hostname=node1.<GUID>.internal  openshift_node_labels="{'logging':'true','cluster': '<GUID>', 'env':'app', 'zone': 'eu-central-1b'}"
+node2.ea11.internal openshift_hostname=node2.ea11.internal  openshift_node_labels="{'logging':'true','cluster': 'ea11', 'env':'app', 'zone': 'eu-central-1b'}"
+node3.ea11.internal openshift_hostname=node3.ea11.internal  openshift_node_labels="{'logging':'true','cluster': 'ea11', 'env':'app', 'zone': 'eu-central-1b'}"
+node1.ea11.internal openshift_hostname=node1.ea11.internal  openshift_node_labels="{'logging':'true','cluster': 'ea11', 'env':'app', 'zone': 'eu-central-1b'}"
 
 ## These are CNS nodes
 # support1.GUID.internal openshift_hostname=support1.GUID.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': 'GUID', 'zone': 'eu-central-1b'}"
@@ -350,11 +348,11 @@ node1.<GUID>.internal openshift_hostname=node1.<GUID>.internal  openshift_node_l
 # support3.GUID.internal openshift_hostname=support3.GUID.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': 'GUID', 'zone': 'eu-central-1b'}"
 
 [nfs]
-support1.<GUID>.internal openshift_hostname=support1.<GUID>.internal
+support1.ea11.internal openshift_hostname=support1.ea11.internal
 
 
 #[glusterfs]
-# support1.<GUID>.internal glusterfs_devices='[ "/dev/xvdd" ]'
-# support2.<GUID>.internal glusterfs_devices='[ "/dev/xvdd" ]'
-# support3.<GUID>.internal glusterfs_devices='[ "/dev/xvdd" ]'
+# support1.ea11.internal glusterfs_devices='[ "/dev/xvdd" ]'
+# support2.ea11.internal glusterfs_devices='[ "/dev/xvdd" ]'
+# support3.ea11.internal glusterfs_devices='[ "/dev/xvdd" ]'
 

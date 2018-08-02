@@ -5,7 +5,6 @@
     version: 1
     guid: ea11
     repo: https://github.com/alvarolop/ocp-deployment-homework
-    server_domain: a
 
   tasks:
     - name: Replace values of the GUID in the openshift-ansible hosts file
@@ -41,10 +40,6 @@
         list: repolist      
       register: result
 
-#    - debug: 
-#        var: "{{ result }}"
-#        verbosity: 2
-
 - name: Check NFS
   hosts: nfs
 
@@ -53,4 +48,15 @@
       shell: exportfs
 
 
+#- name: Include the prerequisites playbook
+#  import_playbook: /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml
+#  when: openshift_install
+#  vars:
+#    openshift_install: false
+
+#- name: Include the deploy_cluster playbook
+#  import_playbook: /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml
+#  when: openshift_install
+#  vars:
+#    openshift_install: false
 
