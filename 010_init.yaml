@@ -3,14 +3,18 @@
   hosts: localhost 
   tasks:
     - name: Create a var with the GUID value
-      shell: GUID=`hostname|awk -F. '{print $2}'`
+      shell: hostname | cut -d"." -f2
       register: guid 
+
+    - name: GUID value
+      debug:
+        msg: "This is the GUID: {{ guid.stdout }}"
 
     - name: Replace values of the GUID in the openshift-ansible hosts file
       replace:
         path: ./hosts-template-alvaro-v1
         regexp: '<GUID>'
-        replace: '{{ guid }}' 
+        replace: '{{ guid.stdout }}' 
 
     - name: Install tools
       yum:
@@ -20,8 +24,8 @@
         - atomic-openshift-utils
         - atomic-openshift-clients
 
-- name: Prepare GUID environment variable across all hosts
-  hosts: all
-  tasks:
-    - name: All GUID env variable
-      shell: export GUID=`hostname | cut -d"." -f2`; echo "export GUID=$GUID" >> $HOME/.bashrc
+#- name: Prepare GUID environment variable across all hosts
+#  hosts: all
+#  tasks:
+#    - name: All GUID env variable
+#      shell: export GUID=`hostname | cut -d"." -f1`; echo "export GUID=$GUID" >> $HOME/.bashrc
