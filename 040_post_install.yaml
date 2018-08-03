@@ -1,0 +1,31 @@
+---
+- name: Copy the system:admin certificate in the bastion 
+  hosts: masters[0]
+  vars:
+    version: 1
+  tasks:
+    - name:  
+      fetch:
+        src: /root/.kube/config
+        dest: /root/.kube/config
+        flat: yes
+
+- name:     
+#    - name: Restart master nodes atomic-openshift-master-api
+#      service:
+#        name: atomic-openshift-master-api
+#        state: restarted
+#
+#    - name: Restart master nodes atomic-openshift-master-controllers
+#      service:
+#        name: atomic-openshift-master-controllers
+#        state: restarted
+
+
+#- name: Check NFS
+#  hosts: nfs
+#
+#  tasks:
+#    - name: Check - NFS
+#      shell: exportfs
+

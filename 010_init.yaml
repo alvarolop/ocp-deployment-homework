@@ -1,12 +1,11 @@
 ---
 - name: Automatize all the tasks
   hosts: localhost 
-  vars:
-    version: 1
-    guid: ea11
-    repo: https://github.com/alvarolop/ocp-deployment-homework
-
   tasks:
+    - name: Create a var with the GUID value
+      shell: GUID=`hostname|awk -F. '{print $2}'`
+      register: guid 
+
     - name: Replace values of the GUID in the openshift-ansible hosts file
       replace:
         path: ./hosts-template-alvaro-v1
@@ -21,3 +20,8 @@
         - atomic-openshift-utils
         - atomic-openshift-clients
 
+- name: Prepare GUID environment variable across all hosts
+  hosts: all
+  tasks:
+    - name: All GUID env variable
+      shell: export GUID=`hostname | cut -d"." -f2`; echo "export GUID=$GUID" >> $HOME/.bashrc
