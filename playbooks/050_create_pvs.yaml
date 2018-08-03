@@ -1,0 +1,16 @@
+- name: Create PVs for Users
+  hosts: nfs
+  tasks:
+    - name:
+      script: ????
+    - name: Restarting NFS Server...
+      shell: systemctl restart nfs-server
+
+- name: Create 25 definitions files for PVs 5G size
+  hosts: localhost
+
+- name: Create 25 definitions files for PVs 10G size
+
+- name: Create all PVs from definitions files
+
+- name: Fix NFS Persistent Volume Recycling

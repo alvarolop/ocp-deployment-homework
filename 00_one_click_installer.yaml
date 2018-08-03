@@ -1,0 +1,15 @@
+---
+- name: Change GUID of the hosts file
+  import_playbook: ./playbooks/010_init.yaml
+
+- name: Prepare the environment to install the cluster
+  import_playbook: ./playbooks/020_pre_install.yaml
+
+- name: Call the prerequisites and deploy_cluster ansible playbooks
+  import_playbook: ./playbooks/030_install.yaml
+
+- name: Allow admin access
+  import_playbook: ./playbooks/040_post_install.yaml
+
+- name: Create PVs
+  import_playbook: ./playbooks/050_create_pvs.yaml

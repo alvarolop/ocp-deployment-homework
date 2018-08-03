@@ -12,9 +12,17 @@
 
     - name: Replace values of the GUID in the openshift-ansible hosts file
       replace:
-        path: ./hosts-template-alvaro-v1
+        path: ../hosts-template-alvaro-v1
         regexp: '<GUID>'
         replace: '{{ guid.stdout }}' 
+
+#    - name: Wait until the string "completed" is in the file /tmp/foo before continuing
+#      wait_for:
+#        path: ../hosts-template-alvaro-v1
+#        search_regex: '{{ guid.stdout }}'
+
+    - name: Refresh inventory to ensure new instaces exist in inventory
+      meta: refresh_inventory
 
     - name: Install tools
       yum:
