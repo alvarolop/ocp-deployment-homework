@@ -1,0 +1,2263 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    labels:
+      docker-registry: default
+    name: docker-registry
+  spec:
+    replicas: 1
+    selector:
+      docker-registry: default
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          docker-registry: default
+      spec:
+        containers:
+        - env:
+          - name: REGISTRY_HTTP_ADDR
+            value: :5000
+          - name: REGISTRY_HTTP_NET
+            value: tcp
+          - name: REGISTRY_HTTP_SECRET
+            value: ebXY3xxvWv8ivrkgtSkScHZ3IklRpHbZhnu/JMpshr8=
+          - name: REGISTRY_MIDDLEWARE_REPOSITORY_OPENSHIFT_ENFORCEQUOTA
+            value: "false"
+          - name: REGISTRY_OPENSHIFT_SERVER_ADDR
+            value: docker-registry.default.svc:5000
+          - name: REGISTRY_HTTP_TLS_CERTIFICATE
+            value: /etc/secrets/registry.crt
+          - name: REGISTRY_HTTP_TLS_KEY
+            value: /etc/secrets/registry.key
+          image: openshift3/ose-docker-registry:v3.9.27
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 5000
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: registry
+          ports:
+          - containerPort: 5000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 5000
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          securityContext:
+            privileged: false
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /registry
+            name: registry-storage
+          - mountPath: /etc/secrets
+            name: registry-certificates
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          env: infra
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: registry
+        serviceAccountName: registry
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: registry-storage
+          persistentVolumeClaim:
+            claimName: registry-claim
+        - name: registry-certificates
+          secret:
+            defaultMode: 420
+            secretName: registry-certificates
+    test: false
+    triggers:
+    - type: ConfigChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: registry-console
+      createdBy: registry-console-template
+      name: registry-console
+    name: registry-console
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      name: registry-console
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: registry-console
+          name: registry-console
+      spec:
+        containers:
+        - env:
+          - name: OPENSHIFT_OAUTH_PROVIDER_URL
+            value: https://loadbalancer1.cc80.example.opentlc.com
+          - name: OPENSHIFT_OAUTH_CLIENT_ID
+            value: cockpit-oauth-client
+          - name: KUBERNETES_INSECURE
+            value: "false"
+          - name: COCKPIT_KUBE_INSECURE
+            value: "false"
+          - name: REGISTRY_ONLY
+            value: "true"
+          - name: REGISTRY_HOST
+            value: docker-registry-default.apps.cc80.example.opentlc.com
+          image: registry.access.redhat.com/openshift3/registry-console:v3.9
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /ping
+              port: 9090
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: registry-console
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /ping
+              port: 9090
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    labels:
+      router: router
+    name: router
+  spec:
+    replicas: 2
+    selector:
+      router: router
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 0
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          router: router
+      spec:
+        containers:
+        - env:
+          - name: DEFAULT_CERTIFICATE_DIR
+            value: /etc/pki/tls/private
+          - name: DEFAULT_CERTIFICATE_PATH
+            value: /etc/pki/tls/private/tls.crt
+          - name: ROUTER_CIPHERS
+          - name: ROUTER_EXTERNAL_HOST_HOSTNAME
+          - name: ROUTER_EXTERNAL_HOST_HTTPS_VSERVER
+          - name: ROUTER_EXTERNAL_HOST_HTTP_VSERVER
+          - name: ROUTER_EXTERNAL_HOST_INSECURE
+            value: "false"
+          - name: ROUTER_EXTERNAL_HOST_INTERNAL_ADDRESS
+          - name: ROUTER_EXTERNAL_HOST_PARTITION_PATH
+          - name: ROUTER_EXTERNAL_HOST_PASSWORD
+          - name: ROUTER_EXTERNAL_HOST_PRIVKEY
+            value: /etc/secret-volume/router.pem
+          - name: ROUTER_EXTERNAL_HOST_USERNAME
+          - name: ROUTER_EXTERNAL_HOST_VXLAN_GW_CIDR
+          - name: ROUTER_LISTEN_ADDR
+            value: 0.0.0.0:1936
+          - name: ROUTER_METRICS_TYPE
+            value: haproxy
+          - name: ROUTER_SERVICE_HTTPS_PORT
+            value: "443"
+          - name: ROUTER_SERVICE_HTTP_PORT
+            value: "80"
+          - name: ROUTER_SERVICE_NAME
+            value: router
+          - name: ROUTER_SERVICE_NAMESPACE
+            value: default
+          - name: ROUTER_SUBDOMAIN
+          - name: STATS_PASSWORD
+            value: 5g0vfPUGBN
+          - name: STATS_PORT
+            value: "1936"
+          - name: STATS_USERNAME
+            value: admin
+          image: openshift3/ose-haproxy-router:v3.9.27
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              host: localhost
+              path: /healthz
+              port: 1936
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: router
+          ports:
+          - containerPort: 80
+            hostPort: 80
+            protocol: TCP
+          - containerPort: 443
+            hostPort: 443
+            protocol: TCP
+          - containerPort: 1936
+            hostPort: 1936
+            name: stats
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              host: localhost
+              path: /healthz
+              port: 1936
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/pki/tls/private
+            name: server-certificate
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        hostNetwork: true
+        nodeSelector:
+          env: infra
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: router
+        serviceAccountName: router
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: server-certificate
+          secret:
+            defaultMode: 420
+            secretName: router-certs
+    test: false
+    triggers:
+    - type: ConfigChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    labels:
+      router: router-1
+    name: router-1
+  spec:
+    replicas: 3
+    selector:
+      router: router-1
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 0
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          router: router-1
+      spec:
+        containers:
+        - env:
+          - name: DEFAULT_CERTIFICATE_DIR
+            value: /etc/pki/tls/private
+          - name: ROUTER_CIPHERS
+          - name: ROUTER_EXTERNAL_HOST_HOSTNAME
+          - name: ROUTER_EXTERNAL_HOST_HTTPS_VSERVER
+          - name: ROUTER_EXTERNAL_HOST_HTTP_VSERVER
+          - name: ROUTER_EXTERNAL_HOST_INSECURE
+            value: "false"
+          - name: ROUTER_EXTERNAL_HOST_INTERNAL_ADDRESS
+          - name: ROUTER_EXTERNAL_HOST_PARTITION_PATH
+          - name: ROUTER_EXTERNAL_HOST_PASSWORD
+          - name: ROUTER_EXTERNAL_HOST_PRIVKEY
+            value: /etc/secret-volume/router.pem
+          - name: ROUTER_EXTERNAL_HOST_USERNAME
+          - name: ROUTER_EXTERNAL_HOST_VXLAN_GW_CIDR
+          - name: ROUTER_LISTEN_ADDR
+            value: 0.0.0.0:1936
+          - name: ROUTER_METRICS_TYPE
+            value: haproxy
+          - name: ROUTER_SERVICE_HTTPS_PORT
+            value: "443"
+          - name: ROUTER_SERVICE_HTTP_PORT
+            value: "80"
+          - name: ROUTER_SERVICE_NAME
+            value: router-1
+          - name: ROUTER_SERVICE_NAMESPACE
+            value: default
+          - name: ROUTER_SUBDOMAIN
+          - name: STATS_PASSWORD
+            value: RTmqH2ukCK
+          - name: STATS_PORT
+            value: "1936"
+          - name: STATS_USERNAME
+            value: admin
+          image: registry.access.redhat.com/openshift3/ose-haproxy-router:v3.9.27
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              host: localhost
+              path: /healthz
+              port: 1936
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: router
+          ports:
+          - containerPort: 80
+            hostPort: 80
+            protocol: TCP
+          - containerPort: 443
+            hostPort: 443
+            protocol: TCP
+          - containerPort: 1936
+            hostPort: 1936
+            name: stats
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              host: localhost
+              path: /healthz
+              port: 1936
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/pki/tls/private
+            name: server-certificate
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        hostNetwork: true
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: router
+        serviceAccountName: router
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: server-certificate
+          secret:
+            defaultMode: 420
+            secretName: router-1-certs
+    test: false
+    triggers:
+    - type: ConfigChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      description: Atomic Registry console
+      openshift.io/generated-by: OpenShiftNewApp
+      openshift.io/image.dockerRepositoryCheck: 2018-08-03T11:26:54Z
+    creationTimestamp: null
+    generation: 2
+    labels:
+      app: registry-console
+      createdBy: registry-console-template
+    name: registry-console
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/default/registry-console:v3.9
+      generation: 2
+      importPolicy: {}
+      name: v3.9
+      referencePolicy:
+        type: Source
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    name: docker-registry
+  spec:
+    host: docker-registry-default.apps.cc80.example.opentlc.com
+    tls:
+      termination: passthrough
+    to:
+      kind: Service
+      name: docker-registry
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2018-08-03T11:26:08Z
+        status: "True"
+        type: Admitted
+      host: docker-registry-default.apps.cc80.example.opentlc.com
+      routerName: router
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2018-08-03T12:54:04Z
+        status: "True"
+        type: Admitted
+      host: docker-registry-default.apps.cc80.example.opentlc.com
+      routerName: router-1
+      wildcardPolicy: None
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    name: registry-console
+  spec:
+    host: registry-console-default.apps.cc80.example.opentlc.com
+    tls:
+      termination: passthrough
+    to:
+      kind: Service
+      name: registry-console
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2018-08-03T11:26:49Z
+        status: "True"
+        type: Admitted
+      host: registry-console-default.apps.cc80.example.opentlc.com
+      routerName: router
+      wildcardPolicy: None
+    - conditions:
+      - lastTransitionTime: 2018-08-03T12:54:04Z
+        status: "True"
+        type: Admitted
+      host: registry-console-default.apps.cc80.example.opentlc.com
+      routerName: router-1
+      wildcardPolicy: None
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: docker-registry
+      openshift.io/deployment.name: docker-registry-1
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: docker-registry-1-
+    labels:
+      deployment: docker-registry-1
+      deploymentconfig: docker-registry
+      docker-registry: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: docker-registry-1
+      uid: f6823a93-970f-11e8-b0ba-0a34dbad01c2
+  spec:
+    containers:
+    - env:
+      - name: REGISTRY_HTTP_ADDR
+        value: :5000
+      - name: REGISTRY_HTTP_NET
+        value: tcp
+      - name: REGISTRY_HTTP_SECRET
+        value: ebXY3xxvWv8ivrkgtSkScHZ3IklRpHbZhnu/JMpshr8=
+      - name: REGISTRY_MIDDLEWARE_REPOSITORY_OPENSHIFT_ENFORCEQUOTA
+        value: "false"
+      - name: REGISTRY_OPENSHIFT_SERVER_ADDR
+        value: docker-registry.default.svc:5000
+      - name: REGISTRY_HTTP_TLS_CERTIFICATE
+        value: /etc/secrets/registry.crt
+      - name: REGISTRY_HTTP_TLS_KEY
+        value: /etc/secrets/registry.key
+      image: openshift3/ose-docker-registry:v3.9.27
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /healthz
+          port: 5000
+          scheme: HTTPS
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: registry
+      ports:
+      - containerPort: 5000
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /healthz
+          port: 5000
+          scheme: HTTPS
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        privileged: false
+        runAsUser: 1000000000
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /registry
+        name: registry-storage
+      - mountPath: /etc/secrets
+        name: registry-certificates
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: registry-token-2dhsc
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: registry-dockercfg-g5hqq
+    nodeName: infranode1.cc80.internal
+    nodeSelector:
+      env: infra
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000000000
+      seLinuxOptions:
+        level: s0:c1,c0
+    serviceAccount: registry
+    serviceAccountName: registry
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    volumes:
+    - name: registry-storage
+      persistentVolumeClaim:
+        claimName: registry-claim
+    - name: registry-certificates
+      secret:
+        defaultMode: 420
+        secretName: registry-certificates
+    - name: registry-token-2dhsc
+      secret:
+        defaultMode: 420
+        secretName: registry-token-2dhsc
+  status:
+    phase: Pending
+    qosClass: Burstable
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: registry-console
+      openshift.io/deployment.name: registry-console-1
+      openshift.io/generated-by: OpenShiftNewApp
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: registry-console-1-
+    labels:
+      app: registry-console
+      deployment: registry-console-1
+      deploymentconfig: registry-console
+      name: registry-console
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: registry-console-1
+      uid: 1dfcc24b-9710-11e8-b0ba-0a34dbad01c2
+  spec:
+    containers:
+    - env:
+      - name: OPENSHIFT_OAUTH_PROVIDER_URL
+        value: https://loadbalancer1.cc80.example.opentlc.com
+      - name: OPENSHIFT_OAUTH_CLIENT_ID
+        value: cockpit-oauth-client
+      - name: KUBERNETES_INSECURE
+        value: "false"
+      - name: COCKPIT_KUBE_INSECURE
+        value: "false"
+      - name: REGISTRY_ONLY
+        value: "true"
+      - name: REGISTRY_HOST
+        value: docker-registry-default.apps.cc80.example.opentlc.com
+      image: registry.access.redhat.com/openshift3/registry-console:v3.9
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /ping
+          port: 9090
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: registry-console
+      ports:
+      - containerPort: 9090
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /ping
+          port: 9090
+          scheme: HTTP
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      resources: {}
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        runAsUser: 1000000000
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-fd2sz
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: default-dockercfg-4nqt5
+    nodeName: node3.cc80.internal
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000000000
+      seLinuxOptions:
+        level: s0:c1,c0
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - name: default-token-fd2sz
+      secret:
+        defaultMode: 420
+        secretName: default-token-fd2sz
+  status:
+    phase: Pending
+    qosClass: BestEffort
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: router-1
+      openshift.io/deployment.name: router-1-1
+      openshift.io/scc: hostnetwork
+    creationTimestamp: null
+    generateName: router-1-1-
+    labels:
+      deployment: router-1-1
+      deploymentconfig: router-1
+      router: router-1
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: router-1-1
+      uid: 3c44917a-971c-11e8-b0ba-0a34dbad01c2
+  spec:
+    containers:
+    - env:
+      - name: DEFAULT_CERTIFICATE_DIR
+        value: /etc/pki/tls/private
+      - name: ROUTER_CIPHERS
+      - name: ROUTER_EXTERNAL_HOST_HOSTNAME
+      - name: ROUTER_EXTERNAL_HOST_HTTPS_VSERVER
+      - name: ROUTER_EXTERNAL_HOST_HTTP_VSERVER
+      - name: ROUTER_EXTERNAL_HOST_INSECURE
+        value: "false"
+      - name: ROUTER_EXTERNAL_HOST_INTERNAL_ADDRESS
+      - name: ROUTER_EXTERNAL_HOST_PARTITION_PATH
+      - name: ROUTER_EXTERNAL_HOST_PASSWORD
+      - name: ROUTER_EXTERNAL_HOST_PRIVKEY
+        value: /etc/secret-volume/router.pem
+      - name: ROUTER_EXTERNAL_HOST_USERNAME
+      - name: ROUTER_EXTERNAL_HOST_VXLAN_GW_CIDR
+      - name: ROUTER_LISTEN_ADDR
+        value: 0.0.0.0:1936
+      - name: ROUTER_METRICS_TYPE
+        value: haproxy
+      - name: ROUTER_SERVICE_HTTPS_PORT
+        value: "443"
+      - name: ROUTER_SERVICE_HTTP_PORT
+        value: "80"
+      - name: ROUTER_SERVICE_NAME
+        value: router-1
+      - name: ROUTER_SERVICE_NAMESPACE
+        value: default
+      - name: ROUTER_SUBDOMAIN
+      - name: STATS_PASSWORD
+        value: RTmqH2ukCK
+      - name: STATS_PORT
+        value: "1936"
+      - name: STATS_USERNAME
+        value: admin
+      image: registry.access.redhat.com/openshift3/ose-haproxy-router:v3.9.27
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          host: localhost
+          path: /healthz
+          port: 1936
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: router
+      ports:
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 443
+        protocol: TCP
+      - containerPort: 1936
+        hostPort: 1936
+        name: stats
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          host: localhost
+          path: /healthz
+          port: 1936
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        runAsUser: 1000000000
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /etc/pki/tls/private
+        name: server-certificate
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: router-token-hl4fh
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    hostNetwork: true
+    imagePullSecrets:
+    - name: router-dockercfg-f9xpm
+    nodeName: master3.cc80.internal
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000000000
+      seLinuxOptions:
+        level: s0:c1,c0
+      supplementalGroups:
+      - 1000000000
+    serviceAccount: router
+    serviceAccountName: router
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    volumes:
+    - name: server-certificate
+      secret:
+        defaultMode: 420
+        secretName: router-1-certs
+    - name: router-token-hl4fh
+      secret:
+        defaultMode: 420
+        secretName: router-token-hl4fh
+  status:
+    phase: Pending
+    qosClass: Burstable
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      openshift.io/deployment-config.name: router-1
+      openshift.io/deployment.name: router-1-1
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    labels:
+      openshift.io/deployer-pod-for.name: router-1-1
+    name: router-1-1-deploy
+    ownerReferences:
+    - apiVersion: v1
+      kind: ReplicationController
+      name: router-1-1
+      uid: 3c44917a-971c-11e8-b0ba-0a34dbad01c2
+  spec:
+    activeDeadlineSeconds: 21600
+    containers:
+    - env:
+      - name: KUBERNETES_MASTER
+        value: https://master1.cc80.internal
+      - name: OPENSHIFT_MASTER
+        value: https://master1.cc80.internal
+      - name: BEARER_TOKEN_FILE
+        value: /var/run/secrets/kubernetes.io/serviceaccount/token
+      - name: OPENSHIFT_CA_DATA
+        value: |
+          -----BEGIN CERTIFICATE-----
+          MIIC6jCCAdKgAwIBAgIBATANBgkqhkiG9w0BAQsFADAmMSQwIgYDVQQDDBtvcGVu
+          c2hpZnQtc2lnbmVyQDE1MzMyOTQzMjMwHhcNMTgwODAzMTEwNTIyWhcNMjMwODAy
+          MTEwNTIzWjAmMSQwIgYDVQQDDBtvcGVuc2hpZnQtc2lnbmVyQDE1MzMyOTQzMjMw
+          ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC2p2FjATYiC/R6MYW+MAiq
+          Q9hKEI0LCf869O0w9OiqK7B3Le/7QaSKbGjdBPXrjWFi5Trdvln5g/qhqxD+gspi
+          1fE81yDAa6+tKoz8r2GO//nglwf5rUHRG3dXZ68MnhB/1h2PLWvyZoMu7hwVVkfp
+          leC3hNDxbmvQz4sUvJ4d6Ld6OSOGo+GmGW2NbGo9fvXYAPyzpnYSvdYLI7fF5kze
+          wdyF+OP+8epg7Jq3uOyOeKBMBUNXuST1vqCuoOr4LUNT5oqWTb0wBdkrWd6S4LoL
+          HzdEqYHZyR/7fiYsVRkiuH24oypRnvOkI5GNnB3vEON9jizW9QxNtjSYbtw1gMhT
+          AgMBAAGjIzAhMA4GA1UdDwEB/wQEAwICpDAPBgNVHRMBAf8EBTADAQH/MA0GCSqG
+          SIb3DQEBCwUAA4IBAQAc+pUVjdW1yj2VOOIe6iQwJ0qV2XHzz6nLOKD5Cto6/UQs
+          VXoIpUhU/hy2Bv1RoepPJ+dNp66o2XWjVXC0R2KgufhxDXvHxJgZFk9HcOUTpnx1
+          qiOIablmIwV3tNPKsA02M4DarTugZdY9oiFRW+CqSyns38m2NWar/GKykYyp7aqG
+          JJ4zC4POzHiXxL3Xj48oK5SYeTFT6GwCW7qTE6PdLjukffRKH8mZp3/sdOTbMnNj
+          3qVGx2u2S4T2N1kPVtQMPNAloQxa/6JdeJYT104SPi/GKbLLjlbLDKg/OKbGOg2T
+          BRLseBPRTE1zh8tCraT7GklVDrbWsMX+pe8axvyO
+          -----END CERTIFICATE-----
+      - name: OPENSHIFT_DEPLOYMENT_NAME
+        value: router-1-1
+      - name: OPENSHIFT_DEPLOYMENT_NAMESPACE
+        value: default
+      image: openshift3/ose-deployer:v3.9.27
+      imagePullPolicy: IfNotPresent
+      name: deployment
+      resources: {}
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        runAsUser: 1000000000
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: deployer-token-mthnk
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: deployer-dockercfg-mnvqw
+    nodeName: node2.cc80.internal
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000000000
+      seLinuxOptions:
+        level: s0:c1,c0
+    serviceAccount: deployer
+    serviceAccountName: deployer
+    terminationGracePeriodSeconds: 10
+    volumes:
+    - name: deployer-token-mthnk
+      secret:
+        defaultMode: 420
+        secretName: deployer-token-mthnk
+  status:
+    phase: Pending
+    qosClass: BestEffort
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: router-1
+      openshift.io/deployment.name: router-1-1
+      openshift.io/scc: hostnetwork
+    creationTimestamp: null
+    generateName: router-1-1-
+    labels:
+      deployment: router-1-1
+      deploymentconfig: router-1
+      router: router-1
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: router-1-1
+      uid: 3c44917a-971c-11e8-b0ba-0a34dbad01c2
+  spec:
+    containers:
+    - env:
+      - name: DEFAULT_CERTIFICATE_DIR
+        value: /etc/pki/tls/private
+      - name: ROUTER_CIPHERS
+      - name: ROUTER_EXTERNAL_HOST_HOSTNAME
+      - name: ROUTER_EXTERNAL_HOST_HTTPS_VSERVER
+      - name: ROUTER_EXTERNAL_HOST_HTTP_VSERVER
+      - name: ROUTER_EXTERNAL_HOST_INSECURE
+        value: "false"
+      - name: ROUTER_EXTERNAL_HOST_INTERNAL_ADDRESS
+      - name: ROUTER_EXTERNAL_HOST_PARTITION_PATH
+      - name: ROUTER_EXTERNAL_HOST_PASSWORD
+      - name: ROUTER_EXTERNAL_HOST_PRIVKEY
+        value: /etc/secret-volume/router.pem
+      - name: ROUTER_EXTERNAL_HOST_USERNAME
+      - name: ROUTER_EXTERNAL_HOST_VXLAN_GW_CIDR
+      - name: ROUTER_LISTEN_ADDR
+        value: 0.0.0.0:1936
+      - name: ROUTER_METRICS_TYPE
+        value: haproxy
+      - name: ROUTER_SERVICE_HTTPS_PORT
+        value: "443"
+      - name: ROUTER_SERVICE_HTTP_PORT
+        value: "80"
+      - name: ROUTER_SERVICE_NAME
+        value: router-1
+      - name: ROUTER_SERVICE_NAMESPACE
+        value: default
+      - name: ROUTER_SUBDOMAIN
+      - name: STATS_PASSWORD
+        value: RTmqH2ukCK
+      - name: STATS_PORT
+        value: "1936"
+      - name: STATS_USERNAME
+        value: admin
+      image: registry.access.redhat.com/openshift3/ose-haproxy-router:v3.9.27
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          host: localhost
+          path: /healthz
+          port: 1936
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: router
+      ports:
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 443
+        protocol: TCP
+      - containerPort: 1936
+        hostPort: 1936
+        name: stats
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          host: localhost
+          path: /healthz
+          port: 1936
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        runAsUser: 1000000000
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /etc/pki/tls/private
+        name: server-certificate
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: router-token-hl4fh
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    hostNetwork: true
+    imagePullSecrets:
+    - name: router-dockercfg-f9xpm
+    nodeName: master1.cc80.internal
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000000000
+      seLinuxOptions:
+        level: s0:c1,c0
+      supplementalGroups:
+      - 1000000000
+    serviceAccount: router
+    serviceAccountName: router
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    volumes:
+    - name: server-certificate
+      secret:
+        defaultMode: 420
+        secretName: router-1-certs
+    - name: router-token-hl4fh
+      secret:
+        defaultMode: 420
+        secretName: router-token-hl4fh
+  status:
+    phase: Pending
+    qosClass: Burstable
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: router-1
+      openshift.io/deployment.name: router-1-1
+      openshift.io/scc: hostnetwork
+    creationTimestamp: null
+    generateName: router-1-1-
+    labels:
+      deployment: router-1-1
+      deploymentconfig: router-1
+      router: router-1
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: router-1-1
+      uid: 3c44917a-971c-11e8-b0ba-0a34dbad01c2
+  spec:
+    containers:
+    - env:
+      - name: DEFAULT_CERTIFICATE_DIR
+        value: /etc/pki/tls/private
+      - name: ROUTER_CIPHERS
+      - name: ROUTER_EXTERNAL_HOST_HOSTNAME
+      - name: ROUTER_EXTERNAL_HOST_HTTPS_VSERVER
+      - name: ROUTER_EXTERNAL_HOST_HTTP_VSERVER
+      - name: ROUTER_EXTERNAL_HOST_INSECURE
+        value: "false"
+      - name: ROUTER_EXTERNAL_HOST_INTERNAL_ADDRESS
+      - name: ROUTER_EXTERNAL_HOST_PARTITION_PATH
+      - name: ROUTER_EXTERNAL_HOST_PASSWORD
+      - name: ROUTER_EXTERNAL_HOST_PRIVKEY
+        value: /etc/secret-volume/router.pem
+      - name: ROUTER_EXTERNAL_HOST_USERNAME
+      - name: ROUTER_EXTERNAL_HOST_VXLAN_GW_CIDR
+      - name: ROUTER_LISTEN_ADDR
+        value: 0.0.0.0:1936
+      - name: ROUTER_METRICS_TYPE
+        value: haproxy
+      - name: ROUTER_SERVICE_HTTPS_PORT
+        value: "443"
+      - name: ROUTER_SERVICE_HTTP_PORT
+        value: "80"
+      - name: ROUTER_SERVICE_NAME
+        value: router-1
+      - name: ROUTER_SERVICE_NAMESPACE
+        value: default
+      - name: ROUTER_SUBDOMAIN
+      - name: STATS_PASSWORD
+        value: RTmqH2ukCK
+      - name: STATS_PORT
+        value: "1936"
+      - name: STATS_USERNAME
+        value: admin
+      image: registry.access.redhat.com/openshift3/ose-haproxy-router:v3.9.27
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          host: localhost
+          path: /healthz
+          port: 1936
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: router
+      ports:
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 443
+        protocol: TCP
+      - containerPort: 1936
+        hostPort: 1936
+        name: stats
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          host: localhost
+          path: /healthz
+          port: 1936
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        runAsUser: 1000000000
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /etc/pki/tls/private
+        name: server-certificate
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: router-token-hl4fh
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    hostNetwork: true
+    imagePullSecrets:
+    - name: router-dockercfg-f9xpm
+    nodeName: node1.cc80.internal
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000000000
+      seLinuxOptions:
+        level: s0:c1,c0
+      supplementalGroups:
+      - 1000000000
+    serviceAccount: router
+    serviceAccountName: router
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    volumes:
+    - name: server-certificate
+      secret:
+        defaultMode: 420
+        secretName: router-1-certs
+    - name: router-token-hl4fh
+      secret:
+        defaultMode: 420
+        secretName: router-token-hl4fh
+  status:
+    phase: Pending
+    qosClass: Burstable
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: router
+      openshift.io/deployment.name: router-1
+      openshift.io/scc: hostnetwork
+    creationTimestamp: null
+    generateName: router-1-
+    labels:
+      deployment: router-1
+      deploymentconfig: router
+      router: router
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: router-1
+      uid: ec1793ee-970f-11e8-b0ba-0a34dbad01c2
+  spec:
+    containers:
+    - env:
+      - name: DEFAULT_CERTIFICATE_DIR
+        value: /etc/pki/tls/private
+      - name: DEFAULT_CERTIFICATE_PATH
+        value: /etc/pki/tls/private/tls.crt
+      - name: ROUTER_CIPHERS
+      - name: ROUTER_EXTERNAL_HOST_HOSTNAME
+      - name: ROUTER_EXTERNAL_HOST_HTTPS_VSERVER
+      - name: ROUTER_EXTERNAL_HOST_HTTP_VSERVER
+      - name: ROUTER_EXTERNAL_HOST_INSECURE
+        value: "false"
+      - name: ROUTER_EXTERNAL_HOST_INTERNAL_ADDRESS
+      - name: ROUTER_EXTERNAL_HOST_PARTITION_PATH
+      - name: ROUTER_EXTERNAL_HOST_PASSWORD
+      - name: ROUTER_EXTERNAL_HOST_PRIVKEY
+        value: /etc/secret-volume/router.pem
+      - name: ROUTER_EXTERNAL_HOST_USERNAME
+      - name: ROUTER_EXTERNAL_HOST_VXLAN_GW_CIDR
+      - name: ROUTER_LISTEN_ADDR
+        value: 0.0.0.0:1936
+      - name: ROUTER_METRICS_TYPE
+        value: haproxy
+      - name: ROUTER_SERVICE_HTTPS_PORT
+        value: "443"
+      - name: ROUTER_SERVICE_HTTP_PORT
+        value: "80"
+      - name: ROUTER_SERVICE_NAME
+        value: router
+      - name: ROUTER_SERVICE_NAMESPACE
+        value: default
+      - name: ROUTER_SUBDOMAIN
+      - name: STATS_PASSWORD
+        value: 5g0vfPUGBN
+      - name: STATS_PORT
+        value: "1936"
+      - name: STATS_USERNAME
+        value: admin
+      image: openshift3/ose-haproxy-router:v3.9.27
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          host: localhost
+          path: /healthz
+          port: 1936
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: router
+      ports:
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 443
+        protocol: TCP
+      - containerPort: 1936
+        hostPort: 1936
+        name: stats
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          host: localhost
+          path: /healthz
+          port: 1936
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        runAsUser: 1000000000
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /etc/pki/tls/private
+        name: server-certificate
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: router-token-hl4fh
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    hostNetwork: true
+    imagePullSecrets:
+    - name: router-dockercfg-f9xpm
+    nodeName: infranode2.cc80.internal
+    nodeSelector:
+      env: infra
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000000000
+      seLinuxOptions:
+        level: s0:c1,c0
+      supplementalGroups:
+      - 1000000000
+    serviceAccount: router
+    serviceAccountName: router
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    volumes:
+    - name: server-certificate
+      secret:
+        defaultMode: 420
+        secretName: router-certs
+    - name: router-token-hl4fh
+      secret:
+        defaultMode: 420
+        secretName: router-token-hl4fh
+  status:
+    phase: Pending
+    qosClass: Burstable
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: router
+      openshift.io/deployment.name: router-1
+      openshift.io/scc: hostnetwork
+    creationTimestamp: null
+    generateName: router-1-
+    labels:
+      deployment: router-1
+      deploymentconfig: router
+      router: router
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: router-1
+      uid: ec1793ee-970f-11e8-b0ba-0a34dbad01c2
+  spec:
+    containers:
+    - env:
+      - name: DEFAULT_CERTIFICATE_DIR
+        value: /etc/pki/tls/private
+      - name: DEFAULT_CERTIFICATE_PATH
+        value: /etc/pki/tls/private/tls.crt
+      - name: ROUTER_CIPHERS
+      - name: ROUTER_EXTERNAL_HOST_HOSTNAME
+      - name: ROUTER_EXTERNAL_HOST_HTTPS_VSERVER
+      - name: ROUTER_EXTERNAL_HOST_HTTP_VSERVER
+      - name: ROUTER_EXTERNAL_HOST_INSECURE
+        value: "false"
+      - name: ROUTER_EXTERNAL_HOST_INTERNAL_ADDRESS
+      - name: ROUTER_EXTERNAL_HOST_PARTITION_PATH
+      - name: ROUTER_EXTERNAL_HOST_PASSWORD
+      - name: ROUTER_EXTERNAL_HOST_PRIVKEY
+        value: /etc/secret-volume/router.pem
+      - name: ROUTER_EXTERNAL_HOST_USERNAME
+      - name: ROUTER_EXTERNAL_HOST_VXLAN_GW_CIDR
+      - name: ROUTER_LISTEN_ADDR
+        value: 0.0.0.0:1936
+      - name: ROUTER_METRICS_TYPE
+        value: haproxy
+      - name: ROUTER_SERVICE_HTTPS_PORT
+        value: "443"
+      - name: ROUTER_SERVICE_HTTP_PORT
+        value: "80"
+      - name: ROUTER_SERVICE_NAME
+        value: router
+      - name: ROUTER_SERVICE_NAMESPACE
+        value: default
+      - name: ROUTER_SUBDOMAIN
+      - name: STATS_PASSWORD
+        value: 5g0vfPUGBN
+      - name: STATS_PORT
+        value: "1936"
+      - name: STATS_USERNAME
+        value: admin
+      image: openshift3/ose-haproxy-router:v3.9.27
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          host: localhost
+          path: /healthz
+          port: 1936
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: router
+      ports:
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 443
+        protocol: TCP
+      - containerPort: 1936
+        hostPort: 1936
+        name: stats
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          host: localhost
+          path: /healthz
+          port: 1936
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        runAsUser: 1000000000
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /etc/pki/tls/private
+        name: server-certificate
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: router-token-hl4fh
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    hostNetwork: true
+    imagePullSecrets:
+    - name: router-dockercfg-f9xpm
+    nodeName: infranode1.cc80.internal
+    nodeSelector:
+      env: infra
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000000000
+      seLinuxOptions:
+        level: s0:c1,c0
+      supplementalGroups:
+      - 1000000000
+    serviceAccount: router
+    serviceAccountName: router
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: node.kubernetes.io/memory-pressure
+      operator: Exists
+    volumes:
+    - name: server-certificate
+      secret:
+        defaultMode: 420
+        secretName: router-certs
+    - name: router-token-hl4fh
+      secret:
+        defaultMode: 420
+        secretName: router-token-hl4fh
+  status:
+    phase: Pending
+    qosClass: Burstable
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.completed-at: 2018-08-03 11:26:34 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-08-03 11:25:45 +0000 UTC
+      openshift.io/deployer-pod.name: docker-registry-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: docker-registry
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "1"
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"docker-registry","namespace":"default","selfLink":"/apis/apps.openshift.io/v1/namespaces/default/deploymentconfigs/docker-registry","uid":"f680135b-970f-11e8-b0ba-0a34dbad01c2","resourceVersion":"43434","generation":1,"creationTimestamp":"2018-08-03T11:25:45Z","labels":{"docker-registry":"default"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"docker-registry":"default"},"template":{"metadata":{"creationTimestamp":null,"labels":{"docker-registry":"default"}},"spec":{"volumes":[{"name":"registry-storage","persistentVolumeClaim":{"claimName":"registry-claim"}},{"name":"registry-certificates","secret":{"secretName":"registry-certificates","defaultMode":420}}],"containers":[{"name":"registry","image":"openshift3/ose-docker-registry:v3.9.27","ports":[{"containerPort":5000,"protocol":"TCP"}],"env":[{"name":"REGISTRY_HTTP_ADDR","value":":5000"},{"name":"REGISTRY_HTTP_NET","value":"tcp"},{"name":"REGISTRY_HTTP_SECRET","value":"ebXY3xxvWv8ivrkgtSkScHZ3IklRpHbZhnu/JMpshr8="},{"name":"REGISTRY_MIDDLEWARE_REPOSITORY_OPENSHIFT_ENFORCEQUOTA","value":"false"},{"name":"REGISTRY_OPENSHIFT_SERVER_ADDR","value":"docker-registry.default.svc:5000"},{"name":"REGISTRY_HTTP_TLS_CERTIFICATE","value":"/etc/secrets/registry.crt"},{"name":"REGISTRY_HTTP_TLS_KEY","value":"/etc/secrets/registry.key"}],"resources":{"requests":{"cpu":"100m","memory":"256Mi"}},"volumeMounts":[{"name":"registry-storage","mountPath":"/registry"},{"name":"registry-certificates","mountPath":"/etc/secrets"}],"livenessProbe":{"httpGet":{"path":"/healthz","port":5000,"scheme":"HTTPS"},"initialDelaySeconds":10,"timeoutSeconds":5,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/healthz","port":5000,"scheme":"HTTPS"},"timeoutSeconds":5,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false}}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","nodeSelector":{"env":"infra"},"serviceAccountName":"registry","serviceAccount":"registry","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":1,"observedGeneration":0,"replicas":0,"updatedReplicas":0,"availableReplicas":0,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]}}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      docker-registry: default
+      openshift.io/deployment-config.name: docker-registry
+    name: docker-registry-1
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: docker-registry
+      uid: f680135b-970f-11e8-b0ba-0a34dbad01c2
+  spec:
+    replicas: 1
+    selector:
+      deployment: docker-registry-1
+      deploymentconfig: docker-registry
+      docker-registry: default
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: docker-registry
+          openshift.io/deployment.name: docker-registry-1
+        creationTimestamp: null
+        labels:
+          deployment: docker-registry-1
+          deploymentconfig: docker-registry
+          docker-registry: default
+      spec:
+        containers:
+        - env:
+          - name: REGISTRY_HTTP_ADDR
+            value: :5000
+          - name: REGISTRY_HTTP_NET
+            value: tcp
+          - name: REGISTRY_HTTP_SECRET
+            value: ebXY3xxvWv8ivrkgtSkScHZ3IklRpHbZhnu/JMpshr8=
+          - name: REGISTRY_MIDDLEWARE_REPOSITORY_OPENSHIFT_ENFORCEQUOTA
+            value: "false"
+          - name: REGISTRY_OPENSHIFT_SERVER_ADDR
+            value: docker-registry.default.svc:5000
+          - name: REGISTRY_HTTP_TLS_CERTIFICATE
+            value: /etc/secrets/registry.crt
+          - name: REGISTRY_HTTP_TLS_KEY
+            value: /etc/secrets/registry.key
+          image: openshift3/ose-docker-registry:v3.9.27
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 5000
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: registry
+          ports:
+          - containerPort: 5000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 5000
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          securityContext:
+            privileged: false
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /registry
+            name: registry-storage
+          - mountPath: /etc/secrets
+            name: registry-certificates
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          env: infra
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: registry
+        serviceAccountName: registry
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: registry-storage
+          persistentVolumeClaim:
+            claimName: registry-claim
+        - name: registry-certificates
+          secret:
+            defaultMode: 420
+            secretName: registry-certificates
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.completed-at: 2018-08-03 11:28:00 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-08-03 11:26:51 +0000 UTC
+      openshift.io/deployer-pod.name: registry-console-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: registry-console
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "1"
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"registry-console","namespace":"default","selfLink":"/apis/apps.openshift.io/v1/namespaces/default/deploymentconfigs/registry-console","uid":"1df9bf96-9710-11e8-b0ba-0a34dbad01c2","resourceVersion":"43680","generation":1,"creationTimestamp":"2018-08-03T11:26:51Z","labels":{"app":"registry-console","createdBy":"registry-console-template","name":"registry-console"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"}],"replicas":1,"revisionHistoryLimit":10,"test":false,"selector":{"name":"registry-console"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"registry-console","name":"registry-console"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"containers":[{"name":"registry-console","image":"registry.access.redhat.com/openshift3/registry-console:v3.9","ports":[{"containerPort":9090,"protocol":"TCP"}],"env":[{"name":"OPENSHIFT_OAUTH_PROVIDER_URL","value":"https://loadbalancer1.cc80.example.opentlc.com"},{"name":"OPENSHIFT_OAUTH_CLIENT_ID","value":"cockpit-oauth-client"},{"name":"KUBERNETES_INSECURE","value":"false"},{"name":"COCKPIT_KUBE_INSECURE","value":"false"},{"name":"REGISTRY_ONLY","value":"true"},{"name":"REGISTRY_HOST","value":"docker-registry-default.apps.cc80.example.opentlc.com"}],"resources":{},"livenessProbe":{"httpGet":{"path":"/ping","port":9090,"scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":5,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/ping","port":9090,"scheme":"HTTP"},"timeoutSeconds":5,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":1,"observedGeneration":0,"replicas":0,"updatedReplicas":0,"availableReplicas":0,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]}}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: registry-console
+      createdBy: registry-console-template
+      name: registry-console
+      openshift.io/deployment-config.name: registry-console
+    name: registry-console-1
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: registry-console
+      uid: 1df9bf96-9710-11e8-b0ba-0a34dbad01c2
+  spec:
+    replicas: 1
+    selector:
+      deployment: registry-console-1
+      deploymentconfig: registry-console
+      name: registry-console
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: registry-console
+          openshift.io/deployment.name: registry-console-1
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: registry-console
+          deployment: registry-console-1
+          deploymentconfig: registry-console
+          name: registry-console
+      spec:
+        containers:
+        - env:
+          - name: OPENSHIFT_OAUTH_PROVIDER_URL
+            value: https://loadbalancer1.cc80.example.opentlc.com
+          - name: OPENSHIFT_OAUTH_CLIENT_ID
+            value: cockpit-oauth-client
+          - name: KUBERNETES_INSECURE
+            value: "false"
+          - name: COCKPIT_KUBE_INSECURE
+            value: "false"
+          - name: REGISTRY_ONLY
+            value: "true"
+          - name: REGISTRY_HOST
+            value: docker-registry-default.apps.cc80.example.opentlc.com
+          image: registry.access.redhat.com/openshift3/registry-console:v3.9
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /ping
+              port: 9090
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: registry-console
+          ports:
+          - containerPort: 9090
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /ping
+              port: 9090
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.completed-at: 2018-08-03 11:26:33 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-08-03 11:25:27 +0000 UTC
+      openshift.io/deployer-pod.name: router-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: router
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "2"
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"router","namespace":"default","selfLink":"/apis/apps.openshift.io/v1/namespaces/default/deploymentconfigs/router","uid":"ec1496b7-970f-11e8-b0ba-0a34dbad01c2","resourceVersion":"43294","generation":1,"creationTimestamp":"2018-08-03T11:25:27Z","labels":{"router":"router"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":0},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"}],"replicas":2,"test":false,"selector":{"router":"router"},"template":{"metadata":{"creationTimestamp":null,"labels":{"router":"router"}},"spec":{"volumes":[{"name":"server-certificate","secret":{"secretName":"router-certs","defaultMode":420}}],"containers":[{"name":"router","image":"openshift3/ose-haproxy-router:v3.9.27","ports":[{"hostPort":80,"containerPort":80,"protocol":"TCP"},{"hostPort":443,"containerPort":443,"protocol":"TCP"},{"name":"stats","hostPort":1936,"containerPort":1936,"protocol":"TCP"}],"env":[{"name":"DEFAULT_CERTIFICATE_DIR","value":"/etc/pki/tls/private"},{"name":"DEFAULT_CERTIFICATE_PATH","value":"/etc/pki/tls/private/tls.crt"},{"name":"ROUTER_CIPHERS"},{"name":"ROUTER_EXTERNAL_HOST_HOSTNAME"},{"name":"ROUTER_EXTERNAL_HOST_HTTPS_VSERVER"},{"name":"ROUTER_EXTERNAL_HOST_HTTP_VSERVER"},{"name":"ROUTER_EXTERNAL_HOST_INSECURE","value":"false"},{"name":"ROUTER_EXTERNAL_HOST_INTERNAL_ADDRESS"},{"name":"ROUTER_EXTERNAL_HOST_PARTITION_PATH"},{"name":"ROUTER_EXTERNAL_HOST_PASSWORD"},{"name":"ROUTER_EXTERNAL_HOST_PRIVKEY","value":"/etc/secret-volume/router.pem"},{"name":"ROUTER_EXTERNAL_HOST_USERNAME"},{"name":"ROUTER_EXTERNAL_HOST_VXLAN_GW_CIDR"},{"name":"ROUTER_LISTEN_ADDR","value":"0.0.0.0:1936"},{"name":"ROUTER_METRICS_TYPE","value":"haproxy"},{"name":"ROUTER_SERVICE_HTTPS_PORT","value":"443"},{"name":"ROUTER_SERVICE_HTTP_PORT","value":"80"},{"name":"ROUTER_SERVICE_NAME","value":"router"},{"name":"ROUTER_SERVICE_NAMESPACE","value":"default"},{"name":"ROUTER_SUBDOMAIN"},{"name":"STATS_PASSWORD","value":"5g0vfPUGBN"},{"name":"STATS_PORT","value":"1936"},{"name":"STATS_USERNAME","value":"admin"}],"resources":{"requests":{"cpu":"100m","memory":"256Mi"}},"volumeMounts":[{"name":"server-certificate","readOnly":true,"mountPath":"/etc/pki/tls/private"}],"livenessProbe":{"httpGet":{"path":"/healthz","port":1936,"host":"localhost","scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/healthz","port":1936,"host":"localhost","scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","nodeSelector":{"env":"infra"},"serviceAccountName":"router","serviceAccount":"router","hostNetwork":true,"securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":1,"observedGeneration":0,"replicas":0,"updatedReplicas":0,"availableReplicas":0,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]}}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      openshift.io/deployment-config.name: router
+      router: router
+    name: router-1
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: router
+      uid: ec1496b7-970f-11e8-b0ba-0a34dbad01c2
+  spec:
+    replicas: 2
+    selector:
+      deployment: router-1
+      deploymentconfig: router
+      router: router
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: router
+          openshift.io/deployment.name: router-1
+        creationTimestamp: null
+        labels:
+          deployment: router-1
+          deploymentconfig: router
+          router: router
+      spec:
+        containers:
+        - env:
+          - name: DEFAULT_CERTIFICATE_DIR
+            value: /etc/pki/tls/private
+          - name: DEFAULT_CERTIFICATE_PATH
+            value: /etc/pki/tls/private/tls.crt
+          - name: ROUTER_CIPHERS
+          - name: ROUTER_EXTERNAL_HOST_HOSTNAME
+          - name: ROUTER_EXTERNAL_HOST_HTTPS_VSERVER
+          - name: ROUTER_EXTERNAL_HOST_HTTP_VSERVER
+          - name: ROUTER_EXTERNAL_HOST_INSECURE
+            value: "false"
+          - name: ROUTER_EXTERNAL_HOST_INTERNAL_ADDRESS
+          - name: ROUTER_EXTERNAL_HOST_PARTITION_PATH
+          - name: ROUTER_EXTERNAL_HOST_PASSWORD
+          - name: ROUTER_EXTERNAL_HOST_PRIVKEY
+            value: /etc/secret-volume/router.pem
+          - name: ROUTER_EXTERNAL_HOST_USERNAME
+          - name: ROUTER_EXTERNAL_HOST_VXLAN_GW_CIDR
+          - name: ROUTER_LISTEN_ADDR
+            value: 0.0.0.0:1936
+          - name: ROUTER_METRICS_TYPE
+            value: haproxy
+          - name: ROUTER_SERVICE_HTTPS_PORT
+            value: "443"
+          - name: ROUTER_SERVICE_HTTP_PORT
+            value: "80"
+          - name: ROUTER_SERVICE_NAME
+            value: router
+          - name: ROUTER_SERVICE_NAMESPACE
+            value: default
+          - name: ROUTER_SUBDOMAIN
+          - name: STATS_PASSWORD
+            value: 5g0vfPUGBN
+          - name: STATS_PORT
+            value: "1936"
+          - name: STATS_USERNAME
+            value: admin
+          image: openshift3/ose-haproxy-router:v3.9.27
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              host: localhost
+              path: /healthz
+              port: 1936
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: router
+          ports:
+          - containerPort: 80
+            hostPort: 80
+            protocol: TCP
+          - containerPort: 443
+            hostPort: 443
+            protocol: TCP
+          - containerPort: 1936
+            hostPort: 1936
+            name: stats
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              host: localhost
+              path: /healthz
+              port: 1936
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/pki/tls/private
+            name: server-certificate
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        hostNetwork: true
+        nodeSelector:
+          env: infra
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: router
+        serviceAccountName: router
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: server-certificate
+          secret:
+            defaultMode: 420
+            secretName: router-certs
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/desired-replicas: "3"
+      openshift.io/deployer-pod.created-at: 2018-08-03 12:53:36 +0000 UTC
+      openshift.io/deployer-pod.name: router-1-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: router-1
+      openshift.io/deployment.phase: Running
+      openshift.io/deployment.replicas: "0"
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"router-1","namespace":"default","selfLink":"/apis/apps.openshift.io/v1/namespaces/default/deploymentconfigs/router-1","uid":"3c421ed5-971c-11e8-b0ba-0a34dbad01c2","resourceVersion":"59703","generation":1,"creationTimestamp":"2018-08-03T12:53:36Z","labels":{"router":"router-1"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":0},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"}],"replicas":3,"test":false,"selector":{"router":"router-1"},"template":{"metadata":{"creationTimestamp":null,"labels":{"router":"router-1"}},"spec":{"volumes":[{"name":"server-certificate","secret":{"secretName":"router-1-certs","defaultMode":420}}],"containers":[{"name":"router","image":"registry.access.redhat.com/openshift3/ose-haproxy-router:v3.9.27","ports":[{"hostPort":80,"containerPort":80,"protocol":"TCP"},{"hostPort":443,"containerPort":443,"protocol":"TCP"},{"name":"stats","hostPort":1936,"containerPort":1936,"protocol":"TCP"}],"env":[{"name":"DEFAULT_CERTIFICATE_DIR","value":"/etc/pki/tls/private"},{"name":"ROUTER_CIPHERS"},{"name":"ROUTER_EXTERNAL_HOST_HOSTNAME"},{"name":"ROUTER_EXTERNAL_HOST_HTTPS_VSERVER"},{"name":"ROUTER_EXTERNAL_HOST_HTTP_VSERVER"},{"name":"ROUTER_EXTERNAL_HOST_INSECURE","value":"false"},{"name":"ROUTER_EXTERNAL_HOST_INTERNAL_ADDRESS"},{"name":"ROUTER_EXTERNAL_HOST_PARTITION_PATH"},{"name":"ROUTER_EXTERNAL_HOST_PASSWORD"},{"name":"ROUTER_EXTERNAL_HOST_PRIVKEY","value":"/etc/secret-volume/router.pem"},{"name":"ROUTER_EXTERNAL_HOST_USERNAME"},{"name":"ROUTER_EXTERNAL_HOST_VXLAN_GW_CIDR"},{"name":"ROUTER_LISTEN_ADDR","value":"0.0.0.0:1936"},{"name":"ROUTER_METRICS_TYPE","value":"haproxy"},{"name":"ROUTER_SERVICE_HTTPS_PORT","value":"443"},{"name":"ROUTER_SERVICE_HTTP_PORT","value":"80"},{"name":"ROUTER_SERVICE_NAME","value":"router-1"},{"name":"ROUTER_SERVICE_NAMESPACE","value":"default"},{"name":"ROUTER_SUBDOMAIN"},{"name":"STATS_PASSWORD","value":"RTmqH2ukCK"},{"name":"STATS_PORT","value":"1936"},{"name":"STATS_USERNAME","value":"admin"}],"resources":{"requests":{"cpu":"100m","memory":"256Mi"}},"volumeMounts":[{"name":"server-certificate","readOnly":true,"mountPath":"/etc/pki/tls/private"}],"livenessProbe":{"httpGet":{"path":"/healthz","port":1936,"host":"localhost","scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/healthz","port":1936,"host":"localhost","scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","serviceAccountName":"router","serviceAccount":"router","hostNetwork":true,"securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":1,"observedGeneration":0,"replicas":0,"updatedReplicas":0,"availableReplicas":0,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]}}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      openshift.io/deployment-config.name: router-1
+      router: router-1
+    name: router-1-1
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: router-1
+      uid: 3c421ed5-971c-11e8-b0ba-0a34dbad01c2
+  spec:
+    replicas: 3
+    selector:
+      deployment: router-1-1
+      deploymentconfig: router-1
+      router: router-1
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: router-1
+          openshift.io/deployment.name: router-1-1
+        creationTimestamp: null
+        labels:
+          deployment: router-1-1
+          deploymentconfig: router-1
+          router: router-1
+      spec:
+        containers:
+        - env:
+          - name: DEFAULT_CERTIFICATE_DIR
+            value: /etc/pki/tls/private
+          - name: ROUTER_CIPHERS
+          - name: ROUTER_EXTERNAL_HOST_HOSTNAME
+          - name: ROUTER_EXTERNAL_HOST_HTTPS_VSERVER
+          - name: ROUTER_EXTERNAL_HOST_HTTP_VSERVER
+          - name: ROUTER_EXTERNAL_HOST_INSECURE
+            value: "false"
+          - name: ROUTER_EXTERNAL_HOST_INTERNAL_ADDRESS
+          - name: ROUTER_EXTERNAL_HOST_PARTITION_PATH
+          - name: ROUTER_EXTERNAL_HOST_PASSWORD
+          - name: ROUTER_EXTERNAL_HOST_PRIVKEY
+            value: /etc/secret-volume/router.pem
+          - name: ROUTER_EXTERNAL_HOST_USERNAME
+          - name: ROUTER_EXTERNAL_HOST_VXLAN_GW_CIDR
+          - name: ROUTER_LISTEN_ADDR
+            value: 0.0.0.0:1936
+          - name: ROUTER_METRICS_TYPE
+            value: haproxy
+          - name: ROUTER_SERVICE_HTTPS_PORT
+            value: "443"
+          - name: ROUTER_SERVICE_HTTP_PORT
+            value: "80"
+          - name: ROUTER_SERVICE_NAME
+            value: router-1
+          - name: ROUTER_SERVICE_NAMESPACE
+            value: default
+          - name: ROUTER_SUBDOMAIN
+          - name: STATS_PASSWORD
+            value: RTmqH2ukCK
+          - name: STATS_PORT
+            value: "1936"
+          - name: STATS_USERNAME
+            value: admin
+          image: registry.access.redhat.com/openshift3/ose-haproxy-router:v3.9.27
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              host: localhost
+              path: /healthz
+              port: 1936
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: router
+          ports:
+          - containerPort: 80
+            hostPort: 80
+            protocol: TCP
+          - containerPort: 443
+            hostPort: 443
+            protocol: TCP
+          - containerPort: 1936
+            hostPort: 1936
+            name: stats
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              host: localhost
+              path: /healthz
+              port: 1936
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/pki/tls/private
+            name: server-certificate
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        hostNetwork: true
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: router
+        serviceAccountName: router
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: server-certificate
+          secret:
+            defaultMode: 420
+            secretName: router-1-certs
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      docker-registry: default
+    name: docker-registry
+  spec:
+    ports:
+    - name: 5000-tcp
+      port: 5000
+      protocol: TCP
+      targetPort: 5000
+    selector:
+      docker-registry: default
+    sessionAffinity: ClientIP
+    sessionAffinityConfig:
+      clientIP:
+        timeoutSeconds: 10800
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      component: apiserver
+      provider: kubernetes
+    name: kubernetes
+  spec:
+    ports:
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 443
+    - name: dns
+      port: 53
+      protocol: UDP
+      targetPort: 8053
+    - name: dns-tcp
+      port: 53
+      protocol: TCP
+      targetPort: 8053
+    sessionAffinity: ClientIP
+    sessionAffinityConfig:
+      clientIP:
+        timeoutSeconds: 10800
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: registry-console
+      createdBy: registry-console-template
+      name: registry-console
+    name: registry-console
+  spec:
+    ports:
+    - name: registry-console
+      port: 9000
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      name: registry-console
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      prometheus.io/port: "1936"
+      prometheus.io/scrape: "true"
+      prometheus.openshift.io/password: 5g0vfPUGBN
+      prometheus.openshift.io/username: admin
+    creationTimestamp: null
+    labels:
+      router: router
+    name: router
+  spec:
+    ports:
+    - name: 80-tcp
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    - name: 443-tcp
+      port: 443
+      protocol: TCP
+      targetPort: 443
+    - name: 1936-tcp
+      port: 1936
+      protocol: TCP
+      targetPort: 1936
+    selector:
+      router: router
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      prometheus.io/port: "1936"
+      prometheus.io/scrape: "true"
+      prometheus.openshift.io/password: RTmqH2ukCK
+      prometheus.openshift.io/username: admin
+      service.alpha.openshift.io/serving-cert-secret-name: router-1-certs
+      service.alpha.openshift.io/serving-cert-signed-by: openshift-service-serving-signer@1533294323
+    creationTimestamp: null
+    labels:
+      router: router-1
+    name: router-1
+  spec:
+    ports:
+    - name: 80-tcp
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    - name: 443-tcp
+      port: 443
+      protocol: TCP
+      targetPort: 443
+    - name: 1936-tcp
+      port: 1936
+      protocol: TCP
+      targetPort: 1936
+    selector:
+      router: router-1
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}

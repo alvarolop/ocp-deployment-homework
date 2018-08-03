@@ -4,9 +4,15 @@
   vars:
     version: 1
   tasks:
-    - name:  
+    - name: Copy files
       fetch:
         src: /root/.kube/config
         dest: /root/.kube/config
         flat: yes
+
+#- name: Scale routers to have one on each infranode
+#  hosts: localhost
+#  tasks:
+#    - name: Scale down
+#      shell: oc adm router router --replicas=4
 
