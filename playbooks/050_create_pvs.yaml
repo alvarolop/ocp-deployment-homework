@@ -27,8 +27,7 @@
 - name: Fix NFS Persistent Volume Recycling
   hosts: nodes
   tasks:
-    - name: Fixing
-      command: "{{item}}"
-      with_items:
-        - "docker pull registry.access.redhat.com/openshift3/ose-recycler:latest"
-        - "docker tag registry.access.redhat.com/openshift3/ose-recycler:latest registry.access.redhat.com/openshift3/ose-recycler:v3.9.30"
+    - name: Docker pull
+      command: "docker pull registry.access.redhat.com/openshift3/ose-recycler:latest"
+    - name: Docker tag
+      command: "docker tag registry.access.redhat.com/openshift3/ose-recycler:latest registry.access.redhat.com/openshift3/ose-recycler:v3.9.30"
