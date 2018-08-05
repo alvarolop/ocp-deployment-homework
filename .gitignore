@@ -1,0 +1,4 @@
+# Ansible retries #
+###################
+*/*.retry
+pvs/

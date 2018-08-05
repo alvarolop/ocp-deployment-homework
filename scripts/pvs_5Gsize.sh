@@ -2,7 +2,7 @@ export GUID=`hostname|awk -F. '{print $2}'`
 
 mkdir ../pvs
 for volume in pv{1..25} ; do
-cat << EOF > /root/pvs/${volume}
+cat << EOF > ../pvs/${volume}
 {
   "apiVersion": "v1",
   "kind": "PersistentVolume",

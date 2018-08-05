@@ -22,7 +22,7 @@
   hosts: localhost
   tasks:
     - name: Create all PVs
-      command: "cat ../pvs/* | oc create -f -"
+      script: ../scripts/pvs_create.sh
 
 - name: Fix NFS Persistent Volume Recycling
   hosts: nodes
