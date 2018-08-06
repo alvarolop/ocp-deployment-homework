@@ -74,13 +74,9 @@ objects:
 - apiVersion: extensions/v1beta1
   kind: NetworkPolicy
   metadata:
-    creationTimestamp: null
-    generation: 1
     name: default-deny
   spec:
-    podSelector: {}
-    policyTypes:
-    - Ingress
+    podSelector:
 parameters:
 - name: PROJECT_NAME
 - name: PROJECT_DISPLAYNAME

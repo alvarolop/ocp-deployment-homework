@@ -19,7 +19,7 @@
   hosts: localhost
   tasks:
     - name: Load project template
-      command: oc create -f ../templates/project_template.yaml
+      command: "oc create -f ../templates/project_template.yaml -n default"
 
 - name: Tell openshift to use the new template
   hosts: masters
@@ -30,8 +30,25 @@
         regexp: "  projectRequestTemplate: ''"
         replace:  "  projectRequestTemplate: 'default/project-request'"
 
+- name: Restart master services to use the new project template
+  hosts: masters
+  tasks:
+    - name: Stop services
+      command: "{{ item }}"
+      with_items:
+        - "systemctl stop atomic-openshift-master-api"
+        - "systemctl stop atomic-openshift-master-controllers"
+
+    - name: Start services
+      command: "{{ item }}"
+      with_items:
+        - "systemctl start atomic-openshift-master-api"
+        - "systemctl start atomic-openshift-master-controllers"
+
+
 # Generate default project template
 # https://docs.openshift.com/container-platform/3.9/admin_guide/managing_projects.html#modifying-the-template-for-new-projects
+# https://docs.openshift.com/container-platform/3.9/admin_guide/managing_networking.html#admin-guide-networking-networkpolicy-setting-default
 # 1. oc adm create-bootstrap-project-template -o yaml > template.yaml
 # 2. Modify it
 # 3. oc create -f template.yaml -n default
