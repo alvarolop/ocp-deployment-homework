@@ -1,5 +1,5 @@
 # Ansible retries #
 ###################
-*/*.retry
+**.retry
 pvs/
 screenlog.*
