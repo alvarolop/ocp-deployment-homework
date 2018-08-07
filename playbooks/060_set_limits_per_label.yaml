@@ -1,0 +1,37 @@
+---
+- name: Use admissionControl plugin to set specific limits per label
+# https://docs.openshift.com/container-platform/3.9/admin_guide/managing_projects.html#limit-projects-per-user
+  hosts: masters
+  tasks:
+    - blockinfile:
+        path: /etc/origin/master/master-config.yaml
+        block: |2
+              ProjectRequestLimit:
+                configuration:
+                  apiVersion: v1
+                  kind: ProjectRequestLimitConfig
+                  limits:
+                    - selector:
+                        level: admin 
+                    - selector:
+                        level: advanced 
+                      maxProjects: 10
+                    - maxProjects: 2 
+        insertafter: "pluginConfig"
+        marker: "# {mark} Modification of the admissionCOntrol plugin" 
+
+#- name: Restart master services to use the new configuration
+#  hosts: masters
+#  tasks:
+#    - name: Stop services
+#      command: "{{ item }}"
+#      with_items:
+#        - "systemctl stop atomic-openshift-master-api"
+#        - "systemctl stop atomic-openshift-master-controllers"
+#
+#    - name: Start services
+#      command: "{{ item }}"
+#      with_items:
+#        - "systemctl start atomic-openshift-master-api"
+#        - "systemctl start atomic-openshift-master-controllers"
+

@@ -71,12 +71,15 @@ objects:
   - apiGroup: rbac.authorization.k8s.io
     kind: User
     name: ${PROJECT_ADMIN_USER}
+# Make NetworkPolicy isolated by default
 - apiVersion: extensions/v1beta1
   kind: NetworkPolicy
   metadata:
     name: default-deny
   spec:
     podSelector:
+# Added Limit range for new projects
+#
 parameters:
 - name: PROJECT_NAME
 - name: PROJECT_DISPLAYNAME

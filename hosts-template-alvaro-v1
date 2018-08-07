@@ -32,10 +32,10 @@ openshift_registry_selector='env=infra'
 #openshift_web_console_nodeselector={'env':'infra'}
 
 # Porject pods node selector
-osm_default_node_selector="env=app"
+osm_default_node_selector="client=common"
 
 # Configure additional projects
-openshift_additional_projects={'openshift-template-service-broker': {'default_node_selector': ''}}
+# openshift_additional_projects={'openshift-template-service-broker': {'default_node_selector': ''}}
 
 
 # Use firewalld instead of iptables
@@ -318,37 +318,37 @@ nfs
 #glusterfs
 
 [lb]
-loadbalancer1.268b.internal host_zone=eu-central-1b
+loadbalancer1.268b.internal 
 
 [masters]
-master1.268b.internal host_zone=eu-central-1b
-master2.268b.internal host_zone=eu-central-1b
-master3.268b.internal host_zone=eu-central-1b
+master1.268b.internal 
+master2.268b.internal 
+master3.268b.internal 
 
 [etcd]
-master1.268b.internal host_zone=eu-central-1b
-master2.268b.internal host_zone=eu-central-1b
-master3.268b.internal host_zone=eu-central-1b
+master1.268b.internal 
+master2.268b.internal
+master3.268b.internal
 
 [nodes]
 ## These are the masters
-master1.268b.internal openshift_hostname=master1.268b.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': '268b', 'zone': 'eu-central-1b'}"
-master2.268b.internal openshift_hostname=master2.268b.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': '268b', 'zone': 'eu-central-1b'}"
-master3.268b.internal openshift_hostname=master3.268b.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': '268b', 'zone': 'eu-central-1b'}"
+master1.268b.internal openshift_hostname=master1.268b.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': '268b'}"
+master2.268b.internal openshift_hostname=master2.268b.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': '268b'}"
+master3.268b.internal openshift_hostname=master3.268b.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': '268b'}"
 
 ## These are infranodes
-infranode1.268b.internal openshift_hostname=infranode1.268b.internal  openshift_node_labels="{'logging':'true','cluster': '268b', 'env':'infra', 'zone': 'eu-central-1b'}"
-infranode2.268b.internal openshift_hostname=infranode2.268b.internal  openshift_node_labels="{'logging':'true','cluster': '268b', 'env':'infra', 'zone': 'eu-central-1b'}"
+infranode1.268b.internal openshift_hostname=infranode1.268b.internal  openshift_node_labels="{'logging':'true','cluster': '268b', 'env':'infra'}"
+infranode2.268b.internal openshift_hostname=infranode2.268b.internal  openshift_node_labels="{'logging':'true','cluster': '268b', 'env':'infra'}"
 
 ## These are regular nodes
-node2.268b.internal openshift_hostname=node2.268b.internal  openshift_node_labels="{'logging':'true','cluster': '268b', 'env':'app', 'zone': 'eu-central-1b'}"
-node3.268b.internal openshift_hostname=node3.268b.internal  openshift_node_labels="{'logging':'true','cluster': '268b', 'env':'app', 'zone': 'eu-central-1b'}"
-node1.268b.internal openshift_hostname=node1.268b.internal  openshift_node_labels="{'logging':'true','cluster': '268b', 'env':'app', 'zone': 'eu-central-1b'}"
+node1.268b.internal openshift_hostname=node2.268b.internal  openshift_node_labels="{'logging':'true','cluster': '268b', 'client': 'alpha'}"
+node2.268b.internal openshift_hostname=node3.268b.internal  openshift_node_labels="{'logging':'true','cluster': '268b', 'client': 'beta'}"
+node3.268b.internal openshift_hostname=node1.268b.internal  openshift_node_labels="{'logging':'true','cluster': '268b', 'client': 'common'}"
 
 ## These are CNS nodes
-# support1.GUID.internal openshift_hostname=support1.GUID.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': 'GUID', 'zone': 'eu-central-1b'}"
-# support2.GUID.internal openshift_hostname=support2.GUID.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': 'GUID', 'zone': 'eu-central-1b'}"
-# support3.GUID.internal openshift_hostname=support3.GUID.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': 'GUID', 'zone': 'eu-central-1b'}"
+# support1.GUID.internal openshift_hostname=support1.GUID.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': 'GUID'}"
+# support2.GUID.internal openshift_hostname=support2.GUID.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': 'GUID'}"
+# support3.GUID.internal openshift_hostname=support3.GUID.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': 'GUID'}"
 
 [nfs]
 support1.268b.internal openshift_hostname=support1.268b.internal
