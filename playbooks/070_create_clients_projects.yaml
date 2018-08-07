@@ -6,7 +6,7 @@
       command: "oc new-project common-project"
 
     - name: Create Alpha corp project
-      command: "oc adm new-project alpha-project --node-selector='client=aplha'"
+      command: "oc adm new-project alpha-project --display-name='Alpha Corp' --node-selector='client=aplha'"
 
     - name: Create Beta corp project
-      command: "oc adm new-project beta-project --node-selector='client=beta'"
+      command: "oc adm new-project beta-project --display-name='Beta Corp' --node-selector='client=beta'"
