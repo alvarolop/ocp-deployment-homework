@@ -35,7 +35,7 @@ openshift_registry_selector='env=infra'
 osm_default_node_selector="client=common"
 
 # Configure additional projects
-# openshift_additional_projects={'openshift-template-service-broker': {'default_node_selector': ''}}
+#openshift_additional_projects={'openshift-template-service-broker': {'default_node_selector': ''}}
 
 
 # Use firewalld instead of iptables

@@ -1,0 +1,12 @@
+---
+- name: Create clients projects
+  hosts: localhost
+  tasks:
+    - name: Create a common project
+      command: "oc new-project common-project"
+
+    - name: Create Alpha corp project
+      command: "oc adm new-project alpha-project --node-selector='client=aplha'"
+
+    - name: Create Beta corp project
+      command: "oc adm new-project beta-project --node-selector='client=beta'"
