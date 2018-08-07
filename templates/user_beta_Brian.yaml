@@ -1,0 +1,10 @@
+apiVersion: v1
+groups: null
+identities:
+- htpasswd_auth:Brian
+kind: User
+metadata:
+  creationTimestamp: null
+  labels:
+    client: beta
+  name: Brian

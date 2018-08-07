@@ -1,0 +1,15 @@
+---
+- name: Create a new user in the htpasswd
+  hosts: masters
+  vars:
+    username: "my_user"
+    password: "my_pass"
+  tasks:
+    - name: Add user to all the htpasswd
+      command: "htpasswd -b /etc/origin/master/htpasswd Amy Amy"
+
+- name: Create a new user in openshift
+  hosts: localhost
+  tasks:
+    - name: Add user to openshift
+      command: "oc create -f ../templates/user_alpha_Amy.yaml"

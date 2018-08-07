@@ -1,0 +1,10 @@
+apiVersion: v1
+groups: null
+identities:
+- htpasswd_auth:Andrew
+kind: User
+metadata:
+  creationTimestamp: null
+  labels:
+    client: alpha
+  name: Andrew

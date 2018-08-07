@@ -13,3 +13,9 @@
 
 - name: Create PVs
   import_playbook: ./playbooks/050_create_pvs.yaml
+
+- name: Set limits per label
+  import_playbook: ./playbooks/060_set_limits_per_label.yaml
+
+- name: Create the default projects
+  import_playbook: ./playbooks/070_create_clients_projects.yaml
