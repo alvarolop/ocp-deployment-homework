@@ -40,3 +40,11 @@
         - "oc label group/alpha client=alpha"
         - "oc label group/beta client=beta"
     
+- name: Add policies to groups
+  hosts: localhost
+  tasks:
+    - name: Add policies
+      command: "{{ item }}"
+      with_items:
+        - "oc adm policy add-role-to-group admin beta -n beta-project"
+        - "oc adm policy add-role-to-group admin alpha -n alpha-project" 

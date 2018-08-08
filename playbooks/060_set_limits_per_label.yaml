@@ -12,26 +12,26 @@
                    kind: ProjectRequestLimitConfig
                    limits:
                      - selector:
-                         level: admin 
+                         level: alpha 
                      - selector:
-                         level: advanced 
+                         level: beta
                        maxProjects: 10
                      - maxProjects: 2 
         insertafter: "pluginConfig"
         marker: "# {mark} Modification of the admissionCOntrol plugin" 
 
-#- name: Restart master services to use the new configuration
-#  hosts: masters
-#  tasks:
-#    - name: Stop services
-#      command: "{{ item }}"
-#      with_items:
-#        - "systemctl stop atomic-openshift-master-api"
-#        - "systemctl stop atomic-openshift-master-controllers"
-#
-#    - name: Start services
-#      command: "{{ item }}"
-#      with_items:
-#        - "systemctl start atomic-openshift-master-api"
-#        - "systemctl start atomic-openshift-master-controllers"
+- name: Restart master services to use the new configuration
+  hosts: masters
+  tasks:
+    - name: Stop services
+      command: "{{ item }}"
+      with_items:
+        - "systemctl stop atomic-openshift-master-api"
+        - "systemctl stop atomic-openshift-master-controllers"
+
+    - name: Start services
+      command: "{{ item }}"
+      with_items:
+        - "systemctl start atomic-openshift-master-api"
+        - "systemctl start atomic-openshift-master-controllers"
 
