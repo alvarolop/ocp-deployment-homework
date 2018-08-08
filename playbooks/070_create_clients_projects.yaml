@@ -24,9 +24,19 @@
 
 - name: Create groups for users
   hosts: localhost
-  taks:
+  tasks:
     - name: Create both groups
       command: "{{ item }}"
       with_items:
         - "oc adm groups new alpha Amy Andrew"
         - "oc adm groups new beta Brian Betty"
+
+- name: Label the groups
+  hosts: localhost
+  tasks:
+    - name: Label the groups
+      command: "{{ item }}"
+      with_items:
+        - "oc label group/alpha client=alpha"
+        - "oc label group/beta client=beta"
+    
