@@ -322,11 +322,11 @@ loadbalancer1.268b.internal
 
 [masters]
 master1.268b.internal 
-master2.268b.internal 
-master3.268b.internal 
+master2.268b.internal
+master3.268b.internal
 
 [etcd]
-master1.268b.internal 
+master1.268b.internal
 master2.268b.internal
 master3.268b.internal
 

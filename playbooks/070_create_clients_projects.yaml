@@ -21,3 +21,12 @@
         - "alpha_Andrew"
         - "beta_Brian"
         - "beta_Betty"
+
+- name: Create groups for users
+  hosts: localhost
+  taks:
+    - name: Create both groups
+      command: "{{ item }}"
+      with_items:
+        - "oc adm groups new alpha Amy Andrew"
+        - "oc adm groups new beta Brian Betty"
