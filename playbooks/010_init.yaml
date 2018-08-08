@@ -12,7 +12,7 @@
 
     - name: Replace values of the GUID in the openshift-ansible hosts file
       replace:
-        path: ../hosts-template-alvaro-v1
+        path: ../hosts
         regexp: '<GUID>'
         replace: '{{ guid.stdout }}' 
 
