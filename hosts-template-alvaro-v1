@@ -321,16 +321,6 @@ nfs
 loadbalancer1.3978.internal 
 
 [masters]
-<<<<<<< HEAD
-master1.268b.internal 
-master2.268b.internal
-master3.268b.internal
-
-[etcd]
-master1.268b.internal
-master2.268b.internal
-master3.268b.internal
-=======
 master1.3978.internal 
 master2.3978.internal 
 master3.3978.internal 
@@ -339,7 +329,6 @@ master3.3978.internal
 master1.3978.internal 
 master2.3978.internal 
 master3.3978.internal 
->>>>>>> cf9d9554a370968346b9b311f48f0008945b047e
 
 [nodes]
 ## These are the masters
