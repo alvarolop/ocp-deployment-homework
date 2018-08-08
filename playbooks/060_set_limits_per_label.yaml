@@ -5,18 +5,18 @@
   tasks:
     - blockinfile:
         path: /etc/origin/master/master-config.yaml
-        block: |2
-              ProjectRequestLimit:
-                configuration:
-                  apiVersion: v1
-                  kind: ProjectRequestLimitConfig
-                  limits:
-                    - selector:
-                        level: admin 
-                    - selector:
-                        level: advanced 
-                      maxProjects: 10
-                    - maxProjects: 2 
+        block: |3
+               ProjectRequestLimit:
+                 configuration:
+                   apiVersion: v1
+                   kind: ProjectRequestLimitConfig
+                   limits:
+                     - selector:
+                         level: admin 
+                     - selector:
+                         level: advanced 
+                       maxProjects: 10
+                     - maxProjects: 2 
         insertafter: "pluginConfig"
         marker: "# {mark} Modification of the admissionCOntrol plugin" 
 
