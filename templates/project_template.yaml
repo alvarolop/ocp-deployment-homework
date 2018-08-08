@@ -78,8 +78,33 @@ objects:
     name: default-deny
   spec:
     podSelector:
-# Added Limit range for new projects
-#
+# Limit ranges
+- apiVersion: "v1"
+  kind: "LimitRange"
+  metadata:
+    name: "core-resource-limits" 
+  spec:
+    limits: # Limit ranges for pods and containers
+      - type: "Pod"
+        max:
+          cpu: "2" 
+          memory: "1Gi" 
+        min:
+          cpu: "200m" 
+          memory: "6Mi" 
+      - type: "Container"
+        max:
+          cpu: "2" 
+          memory: "1Gi" 
+        min:
+          cpu: "100m" 
+          memory: "4Mi" 
+        default: # Default Limits
+          cpu: "300m" 
+          memory: "200Mi" 
+        defaultRequest: # Default Requests
+          cpu: "200m" 
+          memory: "100Mi" 
 parameters:
 - name: PROJECT_NAME
 - name: PROJECT_DISPLAYNAME
