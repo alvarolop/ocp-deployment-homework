@@ -1,0 +1,6 @@
+---
+- name: Add a Jenkins pod
+  hosts: localhost
+  tasks:
+    - name: 
+      

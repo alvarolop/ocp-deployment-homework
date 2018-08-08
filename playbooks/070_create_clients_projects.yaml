@@ -3,10 +3,10 @@
   hosts: localhost
   tasks:
     - name: Create a common project
-      command: "oc new-project common-project"
+      command: "oc new-project common-project --display-name='Common project'"
 
     - name: Create Alpha corp project
-      command: "oc adm new-project alpha-project --display-name='Alpha Corp' --node-selector='client=aplha'"
+      command: "oc adm new-project alpha-project --display-name='Alpha Corp' --node-selector='client=alpha'"
 
     - name: Create Beta corp project
       command: "oc adm new-project beta-project --display-name='Beta Corp' --node-selector='client=beta'"
@@ -41,6 +41,8 @@
         - "oc label group/beta client=beta"
     
 - name: Add policies to groups
+# https://docs.openshift.com/container-platform/3.3/architecture/additional_concepts/authorization.html#roles
+# https://docs.openshift.com/container-platform/3.3/admin_solutions/user_role_mgmt.html#control-user-roles
   hosts: localhost
   tasks:
     - name: Add policies
