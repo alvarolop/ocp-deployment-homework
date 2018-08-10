@@ -1,6 +1,6 @@
-APPLICATION_NAME=spring-rest
-NAMESPACE=basic-spring-boot-stage
+APPLICATION_NAME=openshift-tasks
+NAMESPACE=openshift-tasks-stage
 SA_NAME=jenkins
-SA_NAMESPACE=basic-spring-boot-build
+SA_NAMESPACE=openshift-tasks-cicd
 READINESS_RESPONSE=status.:.UP
 READINESS_PATH=/health

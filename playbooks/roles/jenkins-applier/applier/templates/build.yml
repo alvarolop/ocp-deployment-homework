@@ -69,7 +69,7 @@ parameters:
 - description: The name for the application.
   name: APPLICATION_NAME
   required: true
-  value: basic-spring
+  value: openshift-tasks
 - description: The namespace to deploy into
   name: NAMESPACE
   required: true
@@ -86,7 +86,7 @@ parameters:
 - description: Source code repo for demo app
   name: APPLICATION_SOURCE_REPO
   required: true
-  value: https://github.com/redhat-cop/spring-rest.git
+  value: https://github.com/wkulhanek/openshift-tasks.git
 - description: Path within Git project pointing to the pipeline run script
   name: PIPELINE_SCRIPT
   value: Jenkinsfile
