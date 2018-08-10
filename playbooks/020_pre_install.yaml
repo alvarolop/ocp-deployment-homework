@@ -7,7 +7,6 @@
 
 - name: Check Docker
   hosts: nodes
-  
   tasks:
     - name: Check - docker running
       shell: systemctl status docker | grep Active
@@ -17,7 +16,6 @@
 
 - name: Check repos
   hosts: all
-
   tasks:
     - name: Check - repos
       yum:
@@ -26,7 +24,6 @@
 
 - name: Check NFS
   hosts: nfs
-
   tasks:
     - name: Check - NFS
       shell: exportfs

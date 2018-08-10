@@ -1,19 +1,15 @@
 ---
-- name: Create clients projects
+- name: Create clients, groups and projects
   hosts: localhost
+  connection: local
   tasks:
-    - name: Create a common project
-      command: "oc new-project common-project --display-name='Common project'"
+    - name: Create projects
+      command: "oc adm new-project {{ item }}"
+      with_items:
+        - "common-project --display-name='Common project'"
+        - "alpha-project --display-name='Alpha Corp' --node-selector='client=alpha'"
+        - "beta-project --display-name='Beta Corp' --node-selector='client=beta'"
 
-    - name: Create Alpha corp project
-      command: "oc adm new-project alpha-project --display-name='Alpha Corp' --node-selector='client=alpha'"
-
-    - name: Create Beta corp project
-      command: "oc adm new-project beta-project --display-name='Beta Corp' --node-selector='client=beta'"
-
-- name: Create new users in openshift
-  hosts: localhost
-  tasks:
     - name: Add users to openshift
       command: "oc create -f ../templates/user_{{ item }}.yaml"
       with_items:
@@ -22,30 +18,21 @@
         - "beta_Brian"
         - "beta_Betty"
 
-- name: Create groups for users
-  hosts: localhost
-  tasks:
-    - name: Create both groups
+    - name: Create groups for users
       command: "{{ item }}"
       with_items:
         - "oc adm groups new alpha Amy Andrew"
         - "oc adm groups new beta Brian Betty"
 
-- name: Label the groups
-  hosts: localhost
-  tasks:
     - name: Label the groups
       command: "{{ item }}"
       with_items:
         - "oc label group/alpha client=alpha"
         - "oc label group/beta client=beta"
     
-- name: Add policies to groups
 # https://docs.openshift.com/container-platform/3.3/architecture/additional_concepts/authorization.html#roles
 # https://docs.openshift.com/container-platform/3.3/admin_solutions/user_role_mgmt.html#control-user-roles
-  hosts: localhost
-  tasks:
-    - name: Add policies
+    - name: Add policies to groups
       command: "{{ item }}"
       with_items:
         - "oc adm policy add-role-to-group admin beta -n beta-project"

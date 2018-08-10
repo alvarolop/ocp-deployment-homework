@@ -1,6 +1,7 @@
 ---
 - name: Automatize all the tasks
   hosts: localhost 
+  connection: local
   tasks:
     - name: Create a var with the GUID value
       shell: hostname | cut -d"." -f2

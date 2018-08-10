@@ -1,5 +1,5 @@
 [OSEv3:vars]
-# sed -i 's/<GUID>/<GUID>/g' ~/ocp-deployment-homework/hosts
+# sed -i 's/a86a/a86a/g' ~/ocp-deployment-homework/hosts
 ###########################################################################
 ### Ansible Vars
 ###########################################################################
@@ -75,9 +75,9 @@ openshift_master_api_port=443
 openshift_master_console_port=443
 
 openshift_master_cluster_method=native
-openshift_master_cluster_hostname=loadbalancer1.<GUID>.internal
-openshift_master_cluster_public_hostname=loadbalancer1.<GUID>.example.opentlc.com
-openshift_master_default_subdomain=apps.<GUID>.example.opentlc.com
+openshift_master_cluster_hostname=loadbalancer1.a86a.internal
+openshift_master_cluster_public_hostname=loadbalancer1.a86a.example.opentlc.com
+openshift_master_default_subdomain=apps.a86a.example.opentlc.com
 #openshift_master_ca_certificate={'certfile': '/root/intermediate_ca.crt', 'keyfile': '/root/intermediate_ca.key'}                                                                                                
 openshift_master_overwrite_named_certificates=True
 
@@ -254,13 +254,13 @@ openshift_prometheus_node_exporter_image_version=v3.9
 
 #########################################################################
 ### Disconnected Install Vars
-### Requires a docker registry at isolated1.<GUID>.internal:5000
+### Requires a docker registry at isolated1.a86a.internal:5000
 ###########################################################################
 ## sets the debug level for all OpenShift components.  Default is 2
 ##debug_level=8
 #
 ## used for container-based install, not RPM
-#system_images_registry=isolated1.<GUID>.internal:5000
+#system_images_registry=isolated1.a86a.internal:5000
 #
 ## https://bugzilla.redhat.com/show_bug.cgi?id=1461465  target release 3.9
 ##the enterprise registry will not be added to the docker registries.
@@ -268,39 +268,39 @@ openshift_prometheus_node_exporter_image_version=v3.9
 #openshift_docker_ent_reg=''
 #
 ## https://bugzilla.redhat.com/show_bug.cgi?id=1516534 target release 3.10
-#oreg_url=isolated1.<GUID>.internal:5000/openshift3/ose-${component}:${version}
+#oreg_url=isolated1.a86a.internal:5000/openshift3/ose-${component}:${version}
 #
 #openshift_examples_modify_imagestreams=true
-#openshift_docker_additional_registries=isolated1.<GUID>.internal:5000
-#openshift_docker_insecure_registries=isolated1.<GUID>.internal:5000
+#openshift_docker_additional_registries=isolated1.a86a.internal:5000
+#openshift_docker_insecure_registries=isolated1.a86a.internal:5000
 #openshift_docker_blocked_registries=registry.access.redhat.com,docker.io
-#openshift_metrics_image_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_metrics_image_prefix=isolated1.a86a.internal:5000/openshift3/
 #openshift_metrics_image_version=v3.9.14
-#openshift_logging_image_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_logging_image_prefix=isolated1.a86a.internal:5000/openshift3/
 #openshift_logging_image_version=v3.9.14
-#ansible_service_broker_image_prefix=isolated1.<GUID>.internal:5000/openshift3/ose-
+#ansible_service_broker_image_prefix=isolated1.a86a.internal:5000/openshift3/ose-
 #ansible_service_broker_image_tag=v3.9.14
-#ansible_service_broker_etcd_image_prefix=isolated1.<GUID>.internal:5000/rhel7/
+#ansible_service_broker_etcd_image_prefix=isolated1.a86a.internal:5000/rhel7/
 #ansible_service_broker_etcd_image_tag=latest
-#openshift_service_catalog_image_prefix=isolated1.<GUID>.internal:5000/openshift3/ose-
+#openshift_service_catalog_image_prefix=isolated1.a86a.internal:5000/openshift3/ose-
 #openshift_service_catalog_image_version=v3.9.14
-#openshift_cockpit_deployer_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_cockpit_deployer_prefix=isolated1.a86a.internal:5000/openshift3/
 #openshift_cockpit_deployer_version=v3.9.14
-#template_service_broker_prefix=isolated1.<GUID>.internal:5000/openshift3/ose-
+#template_service_broker_prefix=isolated1.a86a.internal:5000/openshift3/ose-
 #template_service_broker_version=v3.9.14
-#openshift_web_console_prefix=isolated1.<GUID>.internal:5000/openshift3/ose-
+#openshift_web_console_prefix=isolated1.a86a.internal:5000/openshift3/ose-
 #openshift_web_console_version=v3.9.14
 #
 ## PROMETHEUS SETTINGS
-#openshift_prometheus_image_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_prometheus_image_prefix=isolated1.a86a.internal:5000/openshift3/
 #openshift_prometheus_image_version=v3.9.14
-#openshift_prometheus_alertmanager_image_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_prometheus_alertmanager_image_prefix=isolated1.a86a.internal:5000/openshift3/
 #openshift_prometheus_alertmanager_image_version=v3.9.14
-#openshift_prometheus_alertbuffer_image_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_prometheus_alertbuffer_image_prefix=isolated1.a86a.internal:5000/openshift3/
 #openshift_prometheus_alertbuffer_image_version=v3.9.14
-#openshift_prometheus_oauth_proxy_image_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_prometheus_oauth_proxy_image_prefix=isolated1.a86a.internal:5000/openshift3/
 #openshift_prometheus_oauth_proxy_image_version=v3.9.14
-#openshift_prometheus_node_exporter_image_prefix=isolated1.<GUID>.internal:5000/openshift3/
+#openshift_prometheus_node_exporter_image_prefix=isolated1.a86a.internal:5000/openshift3/
 #openshift_prometheus_node_exporter_image_version=v3.9.14
 #
 
@@ -320,32 +320,32 @@ nfs
 #glusterfs
 
 [lb]
-loadbalancer1.<GUID>.internal 
+loadbalancer1.a86a.internal 
 
 [masters]
-master1.<GUID>.internal 
-master2.<GUID>.internal 
-master3.<GUID>.internal 
+master1.a86a.internal 
+master2.a86a.internal 
+master3.a86a.internal 
 
 [etcd]
-master1.<GUID>.internal 
-master2.<GUID>.internal 
-master3.<GUID>.internal 
+master1.a86a.internal 
+master2.a86a.internal 
+master3.a86a.internal 
 
 [nodes]
 ## These are the masters
-master1.<GUID>.internal openshift_hostname=master1.<GUID>.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': '<GUID>'}"
-master2.<GUID>.internal openshift_hostname=master2.<GUID>.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': '<GUID>'}"
-master3.<GUID>.internal openshift_hostname=master3.<GUID>.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': '<GUID>'}"
+master1.a86a.internal openshift_hostname=master1.a86a.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': 'a86a'}"
+master2.a86a.internal openshift_hostname=master2.a86a.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': 'a86a'}"
+master3.a86a.internal openshift_hostname=master3.a86a.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': 'a86a'}"
 
 ## These are infranodes
-infranode1.<GUID>.internal openshift_hostname=infranode1.<GUID>.internal  openshift_node_labels="{'logging':'true','cluster': '<GUID>', 'env':'infra'}"
-infranode2.<GUID>.internal openshift_hostname=infranode2.<GUID>.internal  openshift_node_labels="{'logging':'true','cluster': '<GUID>', 'env':'infra'}"
+infranode1.a86a.internal openshift_hostname=infranode1.a86a.internal  openshift_node_labels="{'logging':'true','cluster': 'a86a', 'env':'infra'}"
+infranode2.a86a.internal openshift_hostname=infranode2.a86a.internal  openshift_node_labels="{'logging':'true','cluster': 'a86a', 'env':'infra'}"
 
 ## These are regular nodes
-node1.<GUID>.internal openshift_hostname=node1.<GUID>.internal  openshift_node_labels="{'logging':'true','cluster': '<GUID>', 'client': 'alpha'}"
-node2.<GUID>.internal openshift_hostname=node2.<GUID>.internal  openshift_node_labels="{'logging':'true','cluster': '<GUID>', 'client': 'beta'}"
-node3.<GUID>.internal openshift_hostname=node3.<GUID>.internal  openshift_node_labels="{'logging':'true','cluster': '<GUID>', 'client': 'common'}"
+node1.a86a.internal openshift_hostname=node1.a86a.internal  openshift_node_labels="{'logging':'true','cluster': 'a86a', 'client': 'alpha'}"
+node2.a86a.internal openshift_hostname=node2.a86a.internal  openshift_node_labels="{'logging':'true','cluster': 'a86a', 'client': 'beta'}"
+node3.a86a.internal openshift_hostname=node3.a86a.internal  openshift_node_labels="{'logging':'true','cluster': 'a86a', 'client': 'common'}"
 
 ## These are CNS nodes
 # support1.GUID.internal openshift_hostname=support1.GUID.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': 'GUID'}"
@@ -353,9 +353,9 @@ node3.<GUID>.internal openshift_hostname=node3.<GUID>.internal  openshift_node_l
 # support3.GUID.internal openshift_hostname=support3.GUID.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': 'GUID'}"
 
 [nfs]
-support1.<GUID>.internal openshift_hostname=support1.<GUID>.internal
+support1.a86a.internal openshift_hostname=support1.a86a.internal
 
 #[glusterfs]
-# support1.<GUID>.internal glusterfs_devices='[ "/dev/xvdd" ]'
-# support2.<GUID>.internal glusterfs_devices='[ "/dev/xvdd" ]'
-# support3.<GUID>.internal glusterfs_devices='[ "/dev/xvdd" ]'
+# support1.a86a.internal glusterfs_devices='[ "/dev/xvdd" ]'
+# support2.a86a.internal glusterfs_devices='[ "/dev/xvdd" ]'
+# support3.a86a.internal glusterfs_devices='[ "/dev/xvdd" ]'

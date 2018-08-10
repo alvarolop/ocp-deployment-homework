@@ -17,6 +17,7 @@
 
 - name: Create the new network policy
   hosts: localhost
+  connection: local
   tasks:
     - name: Load project template
       command: "oc create -f ../templates/project_template.yaml -n default"
