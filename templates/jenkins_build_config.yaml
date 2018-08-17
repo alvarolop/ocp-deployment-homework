@@ -15,6 +15,12 @@ items:
     strategy:
       type: "JenkinsPipeline"
       jenkinsPipelineStrategy:
-        jenkinsfile: ../Jenkinsfile
+        jenkinsfilePath: Jenkinsfile
+    source:
+      git:
+        ref: master
+        uri: https://github.com/alvarolop/openshift-tasks
+      type: Git
+
 kind: List
 metadata: {}
