@@ -5,13 +5,13 @@ items:
   metadata:
     name: "jenkins-pipeline"
   spec:
-    triggers:
-          - github:
-              secret: 5Mlic4Le
-            type: GitHub
-          - generic:
-              secret: FiArdDBH
-            type: Generic
+#    triggers:
+#          - github:
+#              secret: 5Mlic4Le
+#            type: GitHub
+#          - generic:
+#              secret: FiArdDBH
+#            type: Generic
     strategy:
       type: "JenkinsPipeline"
       jenkinsPipelineStrategy:

@@ -1,0 +1,25 @@
+---
+- name: CICD Workflow
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Create the openshift projects
+      command: "oc new-project {{ item }}"
+      with_items:
+        - "pipeline-dev --description='Openshift tasks Development Environment' --display-name='Openshift Tasks - Dev'"
+        - "pipeline-test --description='Openshift tasks Testing Development' --display-name='Openshift Tasks - Test'"
+        - "pipeline-prod --description='Openshift tasks Production Environment' --display-name='Openshift Tasks - Prod'"
+ 
+    - name: Deploy Jenkins pipeline
+      command: "oc new-app jenkins-persistent --param ENABLE_OAUTH=true --param MEMORY_LIMIT=1Gi --param VOLUME_CAPACITY=4Gi -e JENKINS_PASSWORD=openshiftpipelines -n pipeline-dev"
+
+    - name: Add policies and roles
+      command: "oc policy {{ item }}"
+      with_items:
+        - "add-role-to-user edit system:serviceaccount:pipeline-dev:jenkins -n pipeline-test"
+        - "add-role-to-user edit system:serviceaccount:pipeline-dev:jenkins -n pipeline-prod"
+        - "add-role-to-group system:image-puller system:serviceaccounts:pipeline-test -n pipeline-dev"
+        - "add-role-to-group system:image-puller system:serviceaccounts:pipeline-prod -n pipeline-dev"
+
+    - name: Create Jenkins Pipeline
+      command: "oc create -f ../templates/jenkins_build_config.yaml -n pipeline-dev"
