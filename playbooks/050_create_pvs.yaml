@@ -3,27 +3,22 @@
   tasks:
     - name: Create directories for all the NFS 
       script: ../scripts/pvs_create_directories.sh
-    - name: Restarting NFS Server...
-      shell: systemctl restart nfs-server
+
+    - name: Restart NFS server
+      service:
+        name: nfs-server
+        state: restarted
 
 - name: Create 25 definitions files for PVs 5G size
   hosts: localhost
   connection: local
   tasks:
-    - name: Create definitions
+    - name: Create 25 definitions for PVs 5G size
       script: ../scripts/pvs_5Gsize.sh
 
-- name: Create 25 definitions files for PVs 10G size
-  hosts: localhost
-  connection: local
-  tasks:
-    - name: Create definitions
+    - name: Create 25 definitions for PVs 10G size
       script: ../scripts/pvs_10Gsize.sh
 
-- name: Create all PVs from definitions files
-  hosts: localhost
-  connection: local
-  tasks:
     - name: Create all PVs
       script: ../scripts/pvs_create.sh
 

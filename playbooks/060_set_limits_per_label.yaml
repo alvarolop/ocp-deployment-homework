@@ -20,18 +20,13 @@
         insertafter: "pluginConfig"
         marker: "# {mark} Modification of the admissionCOntrol plugin" 
 
-- name: Restart master services to use the new configuration
-  hosts: masters
-  tasks:
-    - name: Stop services
-      command: "{{ item }}"
-      with_items:
-        - "systemctl stop atomic-openshift-master-api"
-        - "systemctl stop atomic-openshift-master-controllers"
+    - name: Restart API
+      service:
+        name: atomic-openshift-master-api
+        state: restarted
 
-    - name: Start services
-      command: "{{ item }}"
-      with_items:
-        - "systemctl start atomic-openshift-master-api"
-        - "systemctl start atomic-openshift-master-controllers"
+    - name: Restart controllers
+      service:
+        name: atomic-openshift-master-controllers
+        state: restarted
 

@@ -71,23 +71,38 @@ objects:
   - apiGroup: rbac.authorization.k8s.io
     kind: User
     name: ${PROJECT_ADMIN_USER}
+# Limit ranges
 - apiVersion: "v1"
   kind: "LimitRange"
   metadata:
-    name: "default-project-limits"
+    name: "core-resource-limits" 
   spec:
-    limits:
-      - type: openshift.io/Image
+    limits: # Limit ranges for pods and containers
+      - type: "Pod"
         max:
-          storage: 50Gi
-      - type: openshift.io/ImageStream
+          cpu: "4" 
+          memory: "4Gi" 
+        min:
+          cpu: "50m" 
+          memory: "6Mi" 
+      - type: "Container"
         max:
-          openshift.io/image-tags: 50
-          openshift.io/images: 120 
+          cpu: "10" 
+          memory: "8Gi" 
+        min:
+          cpu: "50m" 
+          memory: "6Mi" 
+        default: # Default Limits
+          cpu: "1" 
+          memory: "1Gi" 
+        defaultRequest: # Default Requests
+          cpu: "500m" 
+          memory: "1Gi"
+# Network Policy
 - apiVersion: networking.k8s.io/v1
   kind: NetworkPolicy
   metadata:
-    name: allow-same-namespace
+    name: allow-from-same-namespace
   spec:
     podSelector:
     ingress:

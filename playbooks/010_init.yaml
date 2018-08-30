@@ -7,20 +7,11 @@
       shell: hostname | cut -d"." -f2
       register: guid 
 
-    - name: GUID value
-      debug:
-        msg: "This is the GUID: {{ guid.stdout }}"
-
     - name: Replace values of the GUID in the openshift-ansible hosts file
       replace:
         path: ../hosts
         regexp: '<GUID>'
         replace: '{{ guid.stdout }}' 
-
-#    - name: Wait until the string "completed" is in the file /tmp/foo before continuing
-#      wait_for:
-#        path: ../hosts-template-alvaro-v1
-#        search_regex: '{{ guid.stdout }}'
 
     - name: Refresh inventory to ensure new instaces exist in inventory
       meta: refresh_inventory
@@ -33,8 +24,3 @@
         - atomic-openshift-utils
         - atomic-openshift-clients
 
-#- name: Prepare GUID environment variable across all hosts
-#  hosts: all
-#  tasks:
-#    - name: All GUID env variable
-#      shell: export GUID=`hostname | cut -d"." -f1`; echo "export GUID=$GUID" >> $HOME/.bashrc

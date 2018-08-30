@@ -1,26 +1,27 @@
 ---
 - name: Copy the system:admin certificate in the bastion 
   hosts: masters[0]
-  vars:
-    version: 1
   tasks:
     - name: Copy files
       fetch:
         src: /root/.kube/config
         dest: /root/.kube/config
         flat: yes
+
 - name: Check installation
   hosts: masters
   tasks:
     - name: Check etcd instances
-      command: "systemctl status etcd"
+      service:
+        name: etcd
+        state: started
 
 - name: Create the new network policy
   hosts: localhost
   connection: local
   tasks:
-    - name: Label the default project
-      command: "oc label namespace default name=default"
+#    - name: Label the default project
+#      command: "oc label namespace default name=default"
 
     - name: Load project template
       command: "oc create -f ../templates/project_template.yaml -n default"
@@ -46,17 +47,6 @@
       service:
         name: atomic-openshift-master-controllers
         state: restarted
-
-#      command: "{{ item }}"
-#      with_items:
-#        - "systemctl restart atomic-openshift-master-api"
-#        - "systemctl restart atomic-openshift-master-controllers"
-
-#    - name: Start services
-#      command: "{{ item }}"
-#      with_items:
-#        - "systemctl start atomic-openshift-master-api"
-#        - "systemctl start atomic-openshift-master-controllers"
 
 
 # Generate default project template

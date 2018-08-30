@@ -23,12 +23,6 @@
       with_items:
         - "oc adm groups new alpha Amy Andrew"
         - "oc adm groups new beta Brian Betty"
-
-#    - name: Label the groups
-#      command: "{{ item }}"
-#      with_items:
-#        - "oc label group/alpha client=alpha"
-#        - "oc label group/beta client=beta"
     
 # https://docs.openshift.com/container-platform/3.3/architecture/additional_concepts/authorization.html#roles
 # https://docs.openshift.com/container-platform/3.3/admin_solutions/user_role_mgmt.html#control-user-roles
