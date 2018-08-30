@@ -19,3 +19,7 @@
 
 - name: Create the default projects
   import_playbook: ./playbooks/070_create_clients_projects.yaml
+
+- name: Create CICD Workflow
+  import_playbook: ./playbooks/080_cicd_workflow.yaml
+

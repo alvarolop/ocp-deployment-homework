@@ -17,3 +17,13 @@
 
     - name: Create Jenkins Pipeline
       command: "oc create -f ../templates/jenkins_build_config.yaml -n cicd"
+
+#    - name: Wait 40 seconds to be ready
+#      command: sleep 40
+
+    - name: Run bc
+      command: "oc start-build jenkins-pipeline -n cicd"
+
+    - name: Set autoscaler for the previously deployed app OpenShift Tasks
+      command: oc autoscale dc/tasks --min 1 --max 10 --cpu-percent=80 -n cicd
+
