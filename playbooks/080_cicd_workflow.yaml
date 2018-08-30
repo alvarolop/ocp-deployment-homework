@@ -3,9 +3,6 @@
   hosts: localhost
   connection: local
   tasks:
-    - name: Login as system:admin
-      command: "oc login -u system:admin"
-
     - name: Create the openshift projects
       command: "oc new-project {{ item }}"
       with_items:
@@ -13,10 +10,11 @@
         - "tasks-project --description='Openshift tasks Environment' --display-name='Openshift Tasks'"
  
     - name: Deploy Jenkins pipeline
-      command: "oc new-app jenkins-persistent -n cicd"
+      command: "oc new-app jenkins-persistent --param MEMORY_LIMIT=1Gi -n cicd"
 
     - name: Add policy to the jenkins role of cicd to allow it to access the tasks-project
       command: "oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n tasks-project"
+      command: "oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n cicd"
 
 #    - name: Add policy to all the service account groups in the tasks-project to pull images
 #      command: "oc adm policy add-role-to-group system:image-puller system:serviceaccounts:tasks-project -n cicd"

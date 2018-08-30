@@ -71,19 +71,7 @@ objects:
   - apiGroup: rbac.authorization.k8s.io
     kind: User
     name: ${PROJECT_ADMIN_USER}
-- apiVersion: "v1"
-  kind: "LimitRange"
-  metadata:
-    name: "default-project-limits"
-  spec:
-    limits:
-      - type: openshift.io/Image
-        max:
-          storage: 50Gi
-      - type: openshift.io/ImageStream
-        max:
-          openshift.io/image-tags: 50
-          openshift.io/images: 120 
+# Make NetworkPolicy isolated by default
 - apiVersion: networking.k8s.io/v1
   kind: NetworkPolicy
   metadata:
@@ -104,6 +92,47 @@ objects:
       - namespaceSelector:
           matchLabels:
             name: default
+# Limit ranges
+- apiVersion: "v1"
+  kind: "LimitRange"
+  metadata:
+    name: "default-project-limits"
+  spec:
+    limits:
+      - type: openshift.io/Image
+        max:
+          storage: 50Gi
+      - type: openshift.io/ImageStream
+        max:
+          openshift.io/image-tags: 50
+          openshift.io/images: 120 
+# Limit ranges
+#- apiVersion: "v1"
+#  kind: "LimitRange"
+#  metadata:
+#    name: "core-resource-limits" 
+#  spec:
+#    limits: # Limit ranges for pods and containers
+#      - type: "Pod"
+#        max:
+#          cpu: "2" 
+#          memory: "2Gi" 
+#        min:
+#          cpu: "200m" 
+#          memory: "6Mi" 
+#      - type: "Container"
+#        max:
+#          cpu: "2" 
+#          memory: "2Gi" 
+#        min:
+#          cpu: "100m" 
+#          memory: "8Mi" 
+#        default: # Default Limits
+#          cpu: "2" 
+#          memory: "2Gi" 
+#        defaultRequest: # Default Requests
+#          cpu: "500m" 
+#          memory: "1Gi" 
 parameters:
 - name: PROJECT_NAME
 - name: PROJECT_DISPLAYNAME

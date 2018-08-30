@@ -34,17 +34,26 @@
 - name: Restart master services to use the new project template
   hosts: masters
   tasks:
-    - name: Stop services
-      command: "{{ item }}"
-      with_items:
-        - "systemctl stop atomic-openshift-master-api"
-        - "systemctl stop atomic-openshift-master-controllers"
+    - name: Restart API
+      service:
+        name: atomic-openshift-master-api
+        state: restarted
 
-    - name: Start services
-      command: "{{ item }}"
-      with_items:
-        - "systemctl start atomic-openshift-master-api"
-        - "systemctl start atomic-openshift-master-controllers"
+    - name: Restart controllers
+      service:
+        name: atomic-openshift-master-controllers
+        state: restarted
+
+#      command: "{{ item }}"
+#      with_items:
+#        - "systemctl restart atomic-openshift-master-api"
+#        - "systemctl restart atomic-openshift-master-controllers"
+
+#    - name: Start services
+#      command: "{{ item }}"
+#      with_items:
+#        - "systemctl start atomic-openshift-master-api"
+#        - "systemctl start atomic-openshift-master-controllers"
 
 
 # Generate default project template
