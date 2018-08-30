@@ -4,7 +4,7 @@
   connection: local
   tasks:
     - name: Create projects
-      command: "oc new-project {{ item }}"
+      command: "oc adm new-project {{ item }}"
       with_items:
         - "common-project --display-name='Common project'"
         - "alpha-project --display-name='Alpha Corp' --node-selector='client=alpha'"
