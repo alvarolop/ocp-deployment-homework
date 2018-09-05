@@ -3,7 +3,7 @@ items:
 - kind: "BuildConfig"
   apiVersion: "v1"
   metadata:
-    name: "jenkins-pipeline"
+    name: "tasks-bc"
   spec:
 #    triggers:
 #          - github:

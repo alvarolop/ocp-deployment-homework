@@ -7,7 +7,9 @@
       command: "oc new-project {{ item }}"
       with_items:
         - "cicd --description='CI/CD Tools Environment' --display-name='CICD - Jenkins'"
-        - "tasks-project --description='Openshift tasks Environment' --display-name='Openshift Tasks'"
+        - "cicd-dev --description='Openshift tasks Development' --display-name='Tasks - Development'"
+        - "cicd-test --description='Openshift tasks Testing' --display-name='Tasks - Testing'"
+        - "cicd-prod --description='Openshift tasks Production' --display-name='Tasks - Production'"
  
     - name: Deploy Jenkins pipeline
       command: "oc new-app jenkins-persistent --param MEMORY_LIMIT=1Gi -n cicd"
