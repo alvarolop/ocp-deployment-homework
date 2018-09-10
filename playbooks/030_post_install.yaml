@@ -24,7 +24,7 @@
       command: "oc label namespace default name=default"
 
     - name: Load project template
-      command: "oc create -f ../templates/project_template.yaml -n default"
+      command: "oc create -f ../resources/project_template.yaml -n default"
 
 - name: Tell openshift to use the new template
   hosts: masters

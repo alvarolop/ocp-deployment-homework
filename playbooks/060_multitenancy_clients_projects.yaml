@@ -10,16 +10,16 @@
         - "alpha-project --display-name='Alpha Corp' --node-selector='client=alpha'"
         - "beta-project --display-name='Beta Corp' --node-selector='client=beta'"
 
-    - name: Add users to openshift
-      command: "oc create -f ../templates/user_{{ item }}.yaml"
-      with_items:
-        - "alpha_Amy"
-        - "alpha_Andrew"
-        - "beta_Brian"
-        - "beta_Betty"
+#    - name: Add users to openshift
+#      command: "oc create -f ../templates/user_{{ item }}.yaml"
+#      with_items:
+#        - "alpha_Amy"
+#        - "alpha_Andrew"
+#        - "beta_Brian"
+#        - "beta_Betty"
     
-    - name: Add testing users
-      command: "oc process -f ../templates/users_list.yaml | oc create -f -"
+    - name: Add users to openshift
+      command: "oc process -f ../resources/users_list.yaml | oc create -f -"
 
     - name: Create groups for users
       command: "{{ item }}"
