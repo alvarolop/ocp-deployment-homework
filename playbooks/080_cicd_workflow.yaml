@@ -12,7 +12,7 @@
         - "cicd-prod --description='Openshift tasks Production' --display-name='Tasks - Production'"
  
     - name: Deploy Jenkins pipeline
-      command: "oc new-app jenkins-persistent --param MEMORY_LIMIT=1Gi -n cicd"
+      command: "oc new-app jenkins-persistent --param MEMORY_LIMIT=2Gi --param VOLUME_CAPACITY=4Gi -n cicd"
 
     - name: Add policy to the jenkins role of cicd to allow it to access the tasks-project
       command: "oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n {{ item }}"
@@ -22,11 +22,11 @@
         - "cicd-prod"
 
     - name: Enable the pulling of images from cicd project to the dev, test and prod projects
-      command: "oc policy add-role-to-group system:image-puller system:serviceaccounts:{{ item }} -n {{ item }}"
+      command: "{{ item }}"
       with_items:
-        - "cicd-dev"
-        - "cicd-test"
-        - "cicd-prod"
+        - "oc policy add-role-to-group system:image-puller system:serviceaccounts:cicd-dev -n cicd"
+        - "oc policy add-role-to-group system:image-puller system:serviceaccounts:cicd-test -n cicd"
+        - "oc policy add-role-to-group system:image-puller system:serviceaccounts:cicd-prod -n cicd"
 
     - name: Create Jenkins Pipeline
       command: "oc create -f ../templates/jenkins_build_config.yaml -n cicd"
@@ -35,7 +35,7 @@
 #      command: sleep 40
 
     - name: Run bc
-      command: "oc start-build tasks-bc -n cicd"
+      command: "oc start-build cicd-bc -n cicd"
 
     - name: Set autoscaler for the previously deployed app OpenShift Tasks
       command: "oc create -f ../templates/hpa-tasks.yaml -n cicd-prod"

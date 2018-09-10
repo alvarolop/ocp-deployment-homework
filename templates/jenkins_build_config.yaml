@@ -3,7 +3,7 @@ items:
 - kind: "BuildConfig"
   apiVersion: "v1"
   metadata:
-    name: "tasks-bc"
+    name: "cicd-bc"
   spec:
 #    triggers:
 #          - github:
@@ -19,7 +19,7 @@ items:
     source:
       git:
         ref: master
-        uri: https://github.com/alvarolop/openshift-tasks
+        uri: https://github.com/alvarolop/openshift-tasks-1
       type: Git
 
 kind: List

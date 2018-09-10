@@ -80,15 +80,15 @@ objects:
     limits: # Limit ranges for pods and containers
       - type: "Pod"
         max:
-          cpu: "4" 
-          memory: "4Gi" 
+          cpu: "2" 
+          memory: "2Gi" 
         min:
           cpu: "50m" 
           memory: "6Mi" 
       - type: "Container"
         max:
-          cpu: "10" 
-          memory: "8Gi" 
+          cpu: "4" 
+          memory: "4Gi" 
         min:
           cpu: "50m" 
           memory: "6Mi" 
@@ -96,8 +96,8 @@ objects:
           cpu: "1" 
           memory: "1Gi" 
         defaultRequest: # Default Requests
-          cpu: "500m" 
-          memory: "1Gi"
+          cpu: "200m" 
+          memory: "500Mi"
 # Network Policy
 - apiVersion: networking.k8s.io/v1
   kind: NetworkPolicy
