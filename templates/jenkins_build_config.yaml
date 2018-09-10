@@ -19,7 +19,7 @@ items:
     source:
       git:
         ref: eap-7
-        uri: https://github.com/alvarolop/openshift-tasks
+        uri: https://github.com/OpenShiftDemos/openshift-tasks
       type: Git
 
 kind: List
