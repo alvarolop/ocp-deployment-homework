@@ -24,16 +24,13 @@
         - atomic-openshift-utils
         - atomic-openshift-clients
 
-
-
-
-
 - name: Check Docker
   hosts: nodes
   tasks:
     - name: Check - docker running
-      service: docker
-      state: started
+      service: 
+        name: docker
+        state: started
 
 - name: Check repos
   hosts: all
