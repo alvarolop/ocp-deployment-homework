@@ -18,8 +18,8 @@ items:
         jenkinsfilePath: Jenkinsfile
     source:
       git:
-        ref: master
-        uri: https://github.com/alvarolop/openshift-tasks-1
+        ref: eap-7
+        uri: https://github.com/alvarolop/openshift-tasks
       type: Git
 
 kind: List
