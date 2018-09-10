@@ -1,11 +1,11 @@
 ---
-- name: Check Docker
-  hosts: nodes
-  tasks:
-    - name: Check - docker running
-      service:
-        name: docker
-        statue: started
+#- name: Check Docker
+#  hosts: nodes
+#  tasks:
+#    - name: Check - docker running
+#      service:
+#        name: docker
+#        statue: started
 
 - name: Check repos
   hosts: all
