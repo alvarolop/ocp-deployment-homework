@@ -1,13 +1,11 @@
 ---
-
 - name: Check Docker
   hosts: nodes
   tasks:
     - name: Check - docker running
-      command: systemctl status docker | grep Active
-
-    - name: Check - docker version
-      command: docker version | grep Version
+      service:
+        name: docker
+        statue: started
 
 - name: Check repos
   hosts: all
