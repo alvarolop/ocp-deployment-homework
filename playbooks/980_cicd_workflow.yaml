@@ -1,9 +1,0 @@
----
-- name: Call the applier
-  hosts: localhost
-  connection: local
-  tasks:
-    - name: Execute the ansible-playbook command
-      command: "ansible-playbook -i roles/jenkins-applier/applier/inventory/hosts roles/openshift-applier-1.0.2/playbooks/openshift-cluster-seed.yml"
-      register: out
-    - debug: var=out.stdout_lines
