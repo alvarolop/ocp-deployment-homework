@@ -1,6 +1,9 @@
 ---
-- name: Change GUID of the hosts file and prepare the environment to install the cluster
-  import_playbook: ./playbooks/010_pre_install.yaml
+- name: Change GUID of the hosts file
+  import_playbook: ./playbooks/010_init.yaml
+
+- name: Prepare the environment to install the cluster
+  import_playbook: ./playbooks/015_pre_install.yaml
 
 - name: Call the prerequisites and deploy_cluster ansible playbooks
   import_playbook: ./playbooks/020_install.yaml
