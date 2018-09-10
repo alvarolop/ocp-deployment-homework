@@ -1,5 +1,0 @@
-APPLICATION_NAME=openshift-tasks
-NAMESPACE=openshift-tasks-prod
-SA_NAMESPACE=openshift-tasks-cicd
-READINESS_RESPONSE=status.:.UP
-READINESS_PATH=/health
