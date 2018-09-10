@@ -17,6 +17,9 @@
         - "alpha_Andrew"
         - "beta_Brian"
         - "beta_Betty"
+    
+    - name: Add testing users
+      command: "oc process -f ../templates/users_list.yaml | oc create -f -"
 
     - name: Create groups for users
       command: "{{ item }}"
