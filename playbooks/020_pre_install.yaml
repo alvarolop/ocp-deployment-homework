@@ -1,20 +1,20 @@
 ---
-#- name: Check Docker
-#  hosts: nodes
-#  tasks:
-#    - name: Check - docker running
-#      service:
-#        name: docker
-#        statue: started
-
 - name: Check Docker
   hosts: nodes
   tasks:
     - name: Check - docker running
-      shell: systemctl status docker | grep Active
-    
-    - name: Check - docker version
-      shell: docker version|grep Version
+      service:
+        name: docker
+        statue: started
+
+#- name: Check Docker
+#  hosts: nodes
+#  tasks:
+#    - name: Check - docker running
+#      shell: systemctl status docker | grep Active
+#    
+#    - name: Check - docker version
+#      shell: docker version|grep Version
 
 - name: Check repos
   hosts: all
