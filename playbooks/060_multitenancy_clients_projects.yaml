@@ -19,7 +19,7 @@
 #        - "beta_Betty"
     
     - name: Add users to openshift
-      command: "oc process -f ../resources/users_list.yaml | oc create -f -"
+      shell: "oc process -f ../resources/users_list.yaml | oc create -f -"
 
     - name: Create groups for users
       command: "{{ item }}"
