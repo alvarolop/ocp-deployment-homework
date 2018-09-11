@@ -209,6 +209,12 @@ openshift_hosted_router_replicas=2
 #openshift_hosted_router_certificate={"certfile": "/path/to/router.crt", "keyfile": "/path/to/router.key", "cafile": "/path/to/router-ca.crt"}                                                                    
 
 
+# Issue
+# https://access.redhat.com/solutions/3480921
+# https://docs.openshift.com/container-platform/3.4/install_config/install/advanced_install.html#advanced-install-configuring-registry-location
+oreg_url=registry.access.redhat.com/openshift3/ose-${component}:${version}
+openshift_examples_modify_imagestreams=true
+
 
 ###########################################################################
 ### 8. Prometheus components if you chose to install them
