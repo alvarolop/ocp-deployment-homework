@@ -21,5 +21,5 @@
         name: "{{ packages }}"
       vars:
         packages:
-        - atomic-openshift-utils
+#        - atomic-openshift-utils
         - atomic-openshift-clients
