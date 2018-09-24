@@ -312,8 +312,11 @@ openshift_prometheus_node_exporter_image_version=v3.9
 #openshift_prometheus_node_exporter_image_version=v3.9.14
 #
 
+############################################################################
+#### Nodes variables
+############################################################################
 
-
+openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kubernetes.io/master=true','runtime=docker']}, {'name': 'node-config-infra', 'labels': ['node-role.kubernetes.io/infra=true','runtime=docker']}, {'name': 'node-config-glusterfs', 'labels': ['runtime=docker']}, {'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true','runtime=docker','client=common'], 'edits': [{ 'key': 'kubeletArguments.pods-per-core','value': ['20']}]}, {'name': 'node-config-compute-alpha', 'labels': ['node-role.kubernetes.io/compute=true','runtime=docker','client=alpha'], 'edits': [{ 'key': 'kubeletArguments.pods-per-core','value': ['20']}]}, {'name': 'node-config-compute-beta', 'labels': ['node-role.kubernetes.io/compute=true','runtime=docker','client=beta'], 'edits': [{ 'key': 'kubeletArguments.pods-per-core','value': ['20']}]}] 
 
 
 ###########################################################################
@@ -342,28 +345,30 @@ master3.<GUID>.internal
 
 [nodes]
 ## These are the masters
-master1.<GUID>.internal openshift_hostname=master1.<GUID>.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': '<GUID>'}"
-master2.<GUID>.internal openshift_hostname=master2.<GUID>.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': '<GUID>'}"
-master3.<GUID>.internal openshift_hostname=master3.<GUID>.internal  openshift_node_labels="{'logging':'true','openshift_schedulable':'False','cluster': '<GUID>'}"
+master1.<GUID>.internal openshift_node_group_name='node-config-master'
+master2.<GUID>.internal openshift_node_group_name='node-config-master'
+master3.<GUID>.internal openshift_node_group_name='node-config-master'
 
 ## These are infranodes
-infranode1.<GUID>.internal openshift_hostname=infranode1.<GUID>.internal  openshift_node_labels="{'logging':'true','cluster': '<GUID>', 'env':'infra'}"
-infranode2.<GUID>.internal openshift_hostname=infranode2.<GUID>.internal  openshift_node_labels="{'logging':'true','cluster': '<GUID>', 'env':'infra'}"
+infranode1.<GUID>.internal openshift_node_group_name='node-config-infra'
+infranode2.<GUID>.internal openshift_node_group_name='node-config-infra'
 
 ## These are regular nodes
-node1.<GUID>.internal openshift_hostname=node1.<GUID>.internal  openshift_node_labels="{'logging':'true','cluster': '<GUID>', 'client': 'alpha'}"
-node2.<GUID>.internal openshift_hostname=node2.<GUID>.internal  openshift_node_labels="{'logging':'true','cluster': '<GUID>', 'client': 'beta'}"
-node3.<GUID>.internal openshift_hostname=node3.<GUID>.internal  openshift_node_labels="{'logging':'true','cluster': '<GUID>', 'client': 'common'}"
+node1.<GUID>.internal openshift_node_group_name='node-config-compute-alpha'
+node2.<GUID>.internal openshift_node_group_name='node-config-compute-beta'
+node3.<GUID>.internal openshift_node_group_name='node-config-compute'
+node4.<GUID>.internal openshift_node_group_name='node-config-compute'
 
-## These are CNS nodes
-# support1.GUID.internal openshift_hostname=support1.GUID.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': 'GUID'}"
-# support2.GUID.internal openshift_hostname=support2.GUID.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': 'GUID'}"
-# support3.GUID.internal openshift_hostname=support3.GUID.internal  openshift_node_labels="{'env':'glusterfs', 'cluster': 'GUID'}"
+## These are OCS nodes
+# support1.<GUID>.internal openshift_node_group_name='node-config-compute'
+# support2.<GUID>.internal openshift_node_group_name='node-config-compute'
+# support3.<GUID>.internal openshift_node_group_name='node-config-compute'
 
 [nfs]
-support1.<GUID>.internal openshift_hostname=support1.<GUID>.internal
+support1.<GUID>.internal
 
 #[glusterfs]
 # support1.<GUID>.internal glusterfs_devices='[ "/dev/xvdd" ]'
 # support2.<GUID>.internal glusterfs_devices='[ "/dev/xvdd" ]'
 # support3.<GUID>.internal glusterfs_devices='[ "/dev/xvdd" ]'
+
