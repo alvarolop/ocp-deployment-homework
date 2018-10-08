@@ -1,5 +1,6 @@
 [OSEv3:vars]
-# sed -i 's/<GUID>/<GUID>/g' ~/ocp-deployment-homework/hosts
+# sed -i 's/<GUID>/<GUID>/g' ./hosts
+# sed -i 's$<INSTALLATION_PATH>/$<INSTALLATION_PATH>/$g' ./hosts
 ###########################################################################
 ### Ansible Vars
 ###########################################################################
@@ -104,7 +105,7 @@ os_sdn_network_plugin_name='redhat/openshift-ovs-networkpolicy'
 # https://docs.openshift.com/container-platform/3.9/install_config/configuring_authentication.html
 openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
 # Defining htpasswd users
-openshift_master_htpasswd_file=~/ocp-deployment-homework/htpasswd.openshift
+openshift_master_htpasswd_file=<INSTALLATION_PATH>/htpasswd.openshift
 
 ## 2. LDAP Authentication (download ipa-ca.crt first)
 #

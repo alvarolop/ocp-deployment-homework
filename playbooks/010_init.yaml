@@ -13,6 +13,12 @@
         regexp: '<GUID>'
         replace: '{{ guid.stdout }}' 
 
+    - name: Replace values of the INSTALLATION PATH in the openshift-ansible hosts file
+      replace:
+        path: ../hosts
+        regexp: '<INSTALLATION_PATH>'
+        replace: '{{ playbook_dir }}/' 
+
     - name: Refresh inventory to ensure new instaces exist in inventory
       meta: refresh_inventory
 
