@@ -12,11 +12,11 @@
                    kind: ProjectRequestLimitConfig
                    limits:
                      - selector:
-                         level: alpha 
+                         client: alpha 
                      - selector:
-                         level: beta
-                       maxProjects: 10
-                     - maxProjects: 2 
+                         client: beta
+                       maxProjects: 5
+                     - maxProjects: 10
         insertafter: "pluginConfig"
         marker: "# {mark} Modification of the admissionCOntrol plugin" 
 
